@@ -136,7 +136,7 @@
       font-size:13px; padding:8px 10px; border-radius:8px;
     }
 
-    .api-note { font-size:12px; color:var(--muted); margin-top:8px; text-align:right; }
+    
 
     /* Sections grid - initially hidden */
     .sections {
@@ -229,14 +229,7 @@
     /* small footer area */
     .footerTip { margin-top:12px; font-size:13px; color:var(--muted); }
     
-    .config-info {
-      background: #f0f7ff;
-      border-radius: 8px;
-      padding: 16px;
-      margin-top: 20px;
-      font-size: 14px;
-      border-left: 4px solid var(--accent);
-    }
+    
   </style>
 </head>
 <body>
@@ -252,7 +245,6 @@
             <div class="tag">Academic summaries • papers • references</div>
           </div>
           <div style="flex:1"></div>
-          <div class="chip" title="Version">v1.2</div>
         </header>
 
         <div class="searchRow" role="search" aria-label="Search research">
@@ -261,7 +253,6 @@
           <div class="controls" aria-hidden="false">
             <button id="searchBtn" class="btn primary">🔎 Search</button>
             <button id="clearBtn" class="btn ghost small">Clear</button>
-            <div class="api-note">API requests proxied through backend</div>
           </div>
         </div>
       </div>
@@ -272,16 +263,6 @@
       </div>
 
       <div class="footerTip">Tip: Press <kbd>Enter</kbd> (without Shift) to submit quickly.</div>
-      
-      <div class="config-info">
-        <h3>Deployment Configuration</h3>
-        <p>This app is configured to work with Vercel environment variables:</p>
-        <ol>
-          <li>Add your API key in Vercel dashboard as <code>API_KEY</code></li>
-          <li>The frontend makes requests to <code>/api/proxy</code> endpoint</li>
-          <li>API key is never exposed to the client</li>
-        </ol>
-      </div>
     </div>
   </div>
 
