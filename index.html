@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dobby Research Agent — Animated Reveal</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+
+  <!-- Markdown parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <style>
+    :root{
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --accent: #2266ff;
+      --accent-2: #2244aa;
+      --muted: #6b7280;
+      --danger: #b91c1c;
+      --glass: rgba(34,102,255,0.08);
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; }
+    html,body { height: 100%; margin: 0; font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: var(--bg); color: #0f1724; }
+
+    /* Page layout - center search card initially */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      transition: padding 0.5s ease;
+    }
+
+    /* When search triggered, make room at top */
+    .page.revealed {
+      align-items: flex-start;
+      padding-top: 40px;
+    }
+
+    .mainWrap {
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    /* Search container card */
+    .searchCard {
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(12,20,40,0.06);
+      padding: 26px;
+      margin-bottom: 20px;
+      transition: transform 0.6s cubic-bezier(.2,.9,.2,1), width 0.4s ease, border-radius 0.4s ease;
+      transform-origin: top center;
+    }
+
+    /* small shrink + float up effect when revealed */
+    .searchCard.shrink {
+      transform: translateY(-36px) scale(0.95);
+      box-shadow: 0 6px 20px rgba(12,20,40,0.08);
+    }
+
+    header.app {
+      display:flex;
+      gap:18px;
+      align-items:center;
+      margin-bottom: 12px;
+    }
+
+    .logo {
+      width:64px; height:64px; border-radius:12px;
+      display:grid; place-items:center;
+      background: linear-gradient(135deg,var(--accent),var(--accent-2));
+      color: white; font-weight:700; font-family: 'Merriweather', serif;
+      box-shadow: 0 6px 18px rgba(34,102,255,0.18);
+      flex-shrink:0;
+    }
+
+    .title {
+      display:flex; flex-direction:column;
+    }
+    .title .name { font-family: 'Merriweather', serif; font-size:18px; color:#07103a; }
+    .title .tag { color:var(--muted); font-size:13px; margin-top:4px; }
+
+    .searchRow {
+      display:flex;
+      gap:12px;
+      align-items:stretch;
+      margin-top: 10px;
+    }
+
+    textarea#query {
+      flex:1;
+      min-height:92px;
+      padding:14px;
+      border-radius:10px;
+      border:1px solid #e6e9ef;
+      resize:vertical;
+      font-size:15px;
+      line-height:1.45;
+      font-family: inherit;
+      transition: box-shadow 0.18s ease, border 0.18s ease;
+    }
+    textarea#query:focus { box-shadow: 0 6px 18px rgba(34,102,255,0.08); border-color: rgba(34,102,255,0.24); outline: none; }
+
+    .controls {
+      width:220px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .btn {
+      padding:12px 14px;
+      border-radius:10px;
+      border:none; cursor:pointer;
+      font-weight:600;
+      font-size:15px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(180deg,var(--accent),var(--accent-2));
+      color:white;
+      box-shadow: 0 8px 20px rgba(34,102,255,0.18);
+    }
+    .btn.ghost {
+      background:transparent;
+      border:1px solid #e6e9ef;
+      color:var(--muted);
+    }
+    .small {
+      font-size:13px; padding:8px 10px; border-radius:8px;
+    }
+
+    .api-note { font-size:12px; color:var(--muted); margin-top:8px; text-align:right; }
+
+    /* Sections grid - initially hidden */
+    .sections {
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+      margin-top:8px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      pointer-events: none;
+    }
+
+    /* visible state (after search) */
+    .sections.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    @media(min-width:900px){
+      .sections { grid-template-columns: 1fr 1fr; }
+      .controls { width:260px; }
+      header.app { gap:20px; }
+    }
+
+    /* Section card */
+    .section {
+      border-radius:12px;
+      overflow:hidden;
+      border:1px solid #eef2ff;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,255,0.98));
+      padding:0;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    /* each card visible (we'll add stagger via JS) */
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .sectionHeader {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:16px 18px;
+      gap:12px;
+      background: linear-gradient(90deg, rgba(34,102,255,0.03), transparent);
+    }
+    .sectionHeader h2 { margin:0; font-size:16px; color:var(--accent-2); }
+    .sectionHeader .meta { color:var(--muted); font-size:13px; }
+
+    .sectionBody {
+      padding:18px;
+      font-size:15px;
+      line-height:1.6;
+      color:#0f1724;
+      background: #fff;
+    }
+
+    /* loader */
+    .loader {
+      display:flex; gap:10px; align-items:center; color:var(--muted);
+      font-style:italic;
+    }
+
+    .spinner {
+      width:18px; height:18px; border-radius:50%;
+      border:3px solid rgba(34,102,255,0.12);
+      border-top-color:var(--accent);
+      animation:spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg);} }
+
+    .toggleBtn { background:transparent; border:none; cursor:pointer; color:var(--muted); display:flex; gap:8px; align-items:center; }
+
+    .chip { font-size:13px; padding:6px 10px; border-radius:999px; background:var(--glass); color:var(--accent-2); border:1px solid rgba(34,102,255,0.07); }
+    .error { color:var(--danger); background:#fff5f5; padding:10px; border-radius:8px; border-left:4px solid var(--danger); }
+
+    /* markdown */
+    .md a { color:var(--accent); text-decoration:none; }
+    .md a:hover { text-decoration:underline; }
+    .md h3 { margin-top:0.8em; color:#0b2a66; }
+    .md pre { background:#f6f8ff; padding:12px; border-radius:8px; overflow:auto; }
+    .md blockquote { border-left:4px solid #eef2ff; padding-left:12px; color:var(--muted); margin: 8px 0; background: #fbfdff; border-radius:6px; padding-top:8px; padding-bottom:8px; }
+
+    /* small footer area */
+    .footerTip { margin-top:12px; font-size:13px; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="page" id="pageRoot">
+    <div class="mainWrap" role="main" aria-labelledby="appTitle">
+
+      <!-- Search Card -->
+      <div class="searchCard" id="searchCard">
+        <header class="app" role="banner">
+          <div class="logo" aria-hidden="true">DR</div>
+          <div class="title">
+            <div id="appTitle" class="name">Dobby Research Agent</div>
+            <div class="tag">Academic summaries • papers • references</div>
+          </div>
+          <div style="flex:1"></div>
+          <div class="chip" title="Version">v1.2</div>
+        </header>
+
+        <div class="searchRow" role="search" aria-label="Search research">
+          <textarea id="query" aria-label="Search query" placeholder="e.g., 'federated learning in healthcare', 'graph neural networks for chemistry'"></textarea>
+
+          <div class="controls" aria-hidden="false">
+            <button id="searchBtn" class="btn primary">🔎 Search</button>
+            <button id="clearBtn" class="btn ghost small">Clear</button>
+            <div class="api-note">⚠️ API key should be proxied via backend for production</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sections grid -->
+      <div id="sections" class="sections" aria-live="polite">
+        <!-- Cards will be injected here by JS -->
+      </div>
+
+      <div class="footerTip">Tip: Press <kbd>Enter</kbd> (without Shift) to submit quickly.</div>
+    </div>
+  </div>
+
+  <script>
+    // ---------------------------------------------------------
+    // IMPORTANT:
+    // - For development you may paste a key here, BUT for production:
+    //   route requests through a backend that stores your API key securely.
+    // - Never push your real key to public repos.
+    // ---------------------------------------------------------
+    const MODEL = "accounts/sentientfoundation/models/dobby-unhinged-llama-3-3-70b-new";
+    const BACKEND_BASE = (window.BACKEND_BASE || '').replace(/\/$/, '');
+
+    const SECTIONS = [
+      { id: "papers", title: "Papers", meta: "Top 5–7 relevant academic papers (title, authors, year, link if available).",
+        prompt: (q) => `List 6 key academic papers about \"${q}\". For each paper include: Title, Authors, Year, short one-line description (<=20 words) and a link where available. Output in Markdown list format.` },
+      { id: "summary", title: "Summary", meta: "Concise overview of main findings, methods, and open questions.",
+        prompt: (q) => `Provide a concise but comprehensive summary (3–6 short paragraphs) of the current state of research on \"${q}\". Highlight common methods, principal findings, limitations, and practical implications. Format in Markdown with headings.` },
+      { id: "references", title: "References", meta: "Proper academic citations (APA-like) for the most important works.",
+        prompt: (q) => `List formatted academic references (APA style or similar) for the most important works on \"${q}\". Include DOI or URL if possible. Provide 8–12 references as a numbered list in Markdown.` },
+      { id: "related", title: "Related Topics", meta: "Subtopics, adjacent fields and keywords for further exploration.",
+        prompt: (q) => `Suggest related subtopics, keywords, or adjacent research areas for \"${q}\". Provide 8–12 concise bullets and short explanations (<=12 words each). Output as a Markdown list.` }
+    ];
+
+    // dom refs
+    const sectionsEl = document.getElementById('sections');
+    const searchCard = document.getElementById('searchCard');
+    const pageRoot = document.getElementById('pageRoot');
+    const searchBtn = document.getElementById('searchBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const queryInput = document.getElementById('query');
+
+    // helper: create skeleton section DOM
+    function createSectionDOM(s) {
+      const div = document.createElement('div');
+      div.className = 'section';
+      div.id = `section-${s.id}`;
+      div.innerHTML = `
+        <div class="sectionHeader" role="region" aria-labelledby="h-${s.id}">
+          <div style="display:flex;flex-direction:column;">
+            <h2 id="h-${s.id}">${s.title}</h2>
+            <div class="meta">${s.meta}</div>
+          </div>
+          <div class="actions">
+            <button class="toggleBtn" aria-expanded="true" data-target="${s.id}">Hide ▾</button>
+          </div>
+        </div>
+        <div class="sectionBody" id="body-${s.id}">
+          <div class="loader"><div class="spinner" aria-hidden="true"></div><div class="loadingText">Waiting to query...</div></div>
+        </div>`;
+      // toggle
+      const toggle = div.querySelector('.toggleBtn');
+      const body = div.querySelector(`#body-${s.id}`);
+      toggle.addEventListener('click', () => {
+        const expanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        if (expanded) {
+          body.style.display = 'none';
+          toggle.innerHTML = 'Show ▸';
+        } else {
+          body.style.display = '';
+          toggle.innerHTML = 'Hide ▾';
+        }
+      });
+      return div;
+    }
+
+    // render skeleton sections (once)
+    function renderSectionsSkeleton() {
+      sectionsEl.innerHTML = '';
+      for (const s of SECTIONS) {
+        const sec = createSectionDOM(s);
+        sectionsEl.appendChild(sec);
+      }
+    }
+
+    // render md into body
+    function renderMarkdownTo(el, md) {
+      try {
+        el.innerHTML = `<div class="md">${marked.parse(md)}</div>`;
+      } catch (err) {
+        el.innerHTML = `<div class="error">Failed to render content.</div>`;
+      }
+    }
+
+    // set loading text
+    function setSectionLoading(id, text = 'Loading...') {
+      const body = document.getElementById(`body-${id}`);
+      if (!body) return;
+      body.innerHTML = `<div class="loader"><div class="spinner" aria-hidden="true"></div><div class="loadingText">${text}</div></div>`;
+    }
+
+    function setSectionError(id, message) {
+      const body = document.getElementById(`body-${id}`);
+      if (!body) return;
+      body.innerHTML = `<div class="error">❌ ${message}</div>`;
+    }
+
+    // API call for a section
+    async function fetchSection(section, query) {
+      const endpoint = `${BACKEND_BASE}/api/complete` || '/api/complete';
+      const payload = {
+        model: MODEL,
+        messages: [
+          { role: "system", content: "You are Dobby Research Agent, an expert academic research assistant. Format output in Markdown, be concise and accurate." },
+          { role: "user", content: section.prompt(query) }
+        ],
+        max_tokens: 700,
+        temperature: 0.2
+      };
+
+      const resp = await fetch(endpoint, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+ 
+      const obj = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        const err = obj.error || `API returned status ${resp.status}`;
+        throw new Error(err);
+      }
+      if (obj && typeof obj.content === 'string') return obj.content;
+      throw new Error('Malformed response from backend');
+    }
+
+    // Run the search: animate, reveal, then fetch sections in parallel with per-section updates and staggered reveal
+    async function runSearch() {
+      const query = queryInput.value.trim();
+      if (!query) { alert('Please enter a research topic.'); return; }
+
+      // Initial animation: shrink search card + push page into revealed state
+      searchCard.classList.add('shrink');
+      pageRoot.classList.add('revealed');
+
+      // ensure skeleton sections exist
+      renderSectionsSkeleton();
+
+      // delay small time so the user sees the motion
+      setTimeout(() => {
+        // show sections container
+        sectionsEl.classList.add('visible');
+
+        // staggered reveal of each card (CSS class toggles)
+        const sectionNodes = Array.from(sectionsEl.querySelectorAll('.section'));
+        sectionNodes.forEach((node, idx) => {
+          node.style.transitionDelay = `${idx * 90}ms`;
+          // add visible with a small timeout to allow transition-delay to apply
+          setTimeout(() => node.classList.add('visible'), idx * 90 + 60);
+        });
+      }, 180); // small buffer for card shrink start
+
+      // disable UI
+      searchBtn.disabled = true; searchBtn.textContent = 'Searching...';
+      clearBtn.disabled = true;
+
+      // kick off section API calls in parallel, but update each card independently
+      const tasks = SECTIONS.map(async (s) => {
+        try {
+          setSectionLoading(s.id, `🔎 Fetching ${s.title}...`);
+          const content = await fetchSection(s, query);
+          const body = document.getElementById(`body-${s.id}`);
+          if (!body) return;
+          renderMarkdownTo(body, content);
+
+          // add copy for references
+          if (s.id === 'references') {
+            const footer = document.createElement('div');
+            footer.style.marginTop = '12px';
+            footer.style.display = 'flex';
+            footer.style.justifyContent = 'flex-end';
+            footer.style.gap = '8px';
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'btn small';
+            copyBtn.textContent = 'Copy references';
+            copyBtn.addEventListener('click', () => {
+              navigator.clipboard.writeText(content.replace(/\n{2,}/g, '\n\n')).then(() => {
+                copyBtn.textContent = 'Copied ✓';
+                setTimeout(()=> copyBtn.textContent = 'Copy references', 1400);
+              });
+            });
+            footer.appendChild(copyBtn);
+            body.appendChild(footer);
+          }
+
+        } catch (err) {
+          setSectionError(s.id, err.message || 'Failed to fetch section.');
+        }
+      });
+
+      await Promise.all(tasks).catch(()=>{/* per-section handled */});
+
+      // re-enable UI
+      searchBtn.disabled = false; searchBtn.textContent = 'Search';
+      clearBtn.disabled = false;
+    }
+
+    // init skeleton on load (so the layout has something but hidden until search)
+    renderSectionsSkeleton();
+
+    // Event listeners
+    searchBtn.addEventListener('click', runSearch);
+    clearBtn.addEventListener('click', () => {
+      queryInput.value = '';
+      // reset page to initial (centered) state
+      searchCard.classList.remove('shrink');
+      pageRoot.classList.remove('revealed');
+      sectionsEl.classList.remove('visible');
+      // remove visible class from each card (reset)
+      document.querySelectorAll('.section').forEach(node => node.classList.remove('visible'));
+      // re-render skeleton (reset loading text)
+      renderSectionsSkeleton();
+    });
+
+    // submit on Enter (without shift)
+    queryInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); runSearch(); }
+    });
+
+    // auto-resize textarea
+    queryInput.addEventListener('input', function () {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+    });
+
+    // small accessibility: focus textarea on load
+    window.addEventListener('load', () => setTimeout(()=> queryInput.focus(), 300));
+  </script>
+</body>
+</html>
