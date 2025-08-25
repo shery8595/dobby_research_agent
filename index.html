@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -228,6 +228,15 @@
 
     /* small footer area */
     .footerTip { margin-top:12px; font-size:13px; color:var(--muted); }
+    
+    .config-info {
+      background: #f0f7ff;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 20px;
+      font-size: 14px;
+      border-left: 4px solid var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -252,7 +261,7 @@
           <div class="controls" aria-hidden="false">
             <button id="searchBtn" class="btn primary">🔎 Search</button>
             <button id="clearBtn" class="btn ghost small">Clear</button>
-            <div class="api-note">⚠️ API key should be proxied via backend for production</div>
+            <div class="api-note">API requests proxied through backend</div>
           </div>
         </div>
       </div>
@@ -263,18 +272,23 @@
       </div>
 
       <div class="footerTip">Tip: Press <kbd>Enter</kbd> (without Shift) to submit quickly.</div>
+      
+      <div class="config-info">
+        <h3>Deployment Configuration</h3>
+        <p>This app is configured to work with Vercel environment variables:</p>
+        <ol>
+          <li>Add your API key in Vercel dashboard as <code>API_KEY</code></li>
+          <li>The frontend makes requests to <code>/api/proxy</code> endpoint</li>
+          <li>API key is never exposed to the client</li>
+        </ol>
+      </div>
     </div>
   </div>
 
   <script>
-    // ---------------------------------------------------------
-    // IMPORTANT:
-    // - For development you may paste a key here, BUT for production:
-    //   route requests through a backend that stores your API key securely.
-    // - Never push your real key to public repos.
-    // ---------------------------------------------------------
+    // Configuration - API endpoint is now our proxy
+    const PROXY_URL = '/api/proxy';
     const MODEL = "accounts/sentientfoundation/models/dobby-unhinged-llama-3-3-70b-new";
-    const BACKEND_BASE = (window.BACKEND_BASE || '').replace(/\/$/, '');
 
     const SECTIONS = [
       { id: "papers", title: "Papers", meta: "Top 5–7 relevant academic papers (title, authors, year, link if available).",
@@ -361,9 +375,8 @@
       body.innerHTML = `<div class="error">❌ ${message}</div>`;
     }
 
-    // API call for a section
+    // API call for a section through proxy
     async function fetchSection(section, query) {
-      const endpoint = `${BACKEND_BASE}/api/complete` || '/api/complete';
       const payload = {
         model: MODEL,
         messages: [
@@ -374,19 +387,23 @@
         temperature: 0.2
       };
 
-      const resp = await fetch(endpoint, {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
- 
-      const obj = await resp.json().catch(() => ({}));
-      if (!resp.ok) {
-        const err = obj.error || `API returned status ${resp.status}`;
-        throw new Error(err);
+      try {
+        const resp = await fetch(PROXY_URL, {
+          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!resp.ok) {
+          throw new Error(`API returned status ${resp.status}`);
+        }
+
+        const data = await resp.json();
+        return data.choices && data.choices[0] && data.choices[0].message?.content;
+      } catch (error) {
+        console.error('API Error:', error);
+        throw new Error('Failed to fetch data from the server');
       }
-      if (obj && typeof obj.content === 'string') return obj.content;
-      throw new Error('Malformed response from backend');
     }
 
     // Run the search: animate, reveal, then fetch sections in parallel with per-section updates and staggered reveal
