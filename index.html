@@ -292,11 +292,11 @@
 
     const SECTIONS = [
       { id: "papers", title: "Papers", meta: "Top 5–7 relevant academic papers (title, authors, year, link if available).",
-        prompt: (q) => `List 6 key academic papers about \"${q}\". For each paper include: Title, Authors, Year, short one-line description (<=20 words) and a link where available. Output in Markdown list format.` },
+        prompt: (q) => `List 6 key academic papers about \"${q}\". For each paper include: Title, Authors, Year, short one-line description (<=20 words) and a link where available. Output in Markdown list format and on next line.` },
       { id: "summary", title: "Summary", meta: "Concise overview of main findings, methods, and open questions.",
         prompt: (q) => `Provide a concise but comprehensive summary (3–6 short paragraphs) of the current state of research on \"${q}\". Highlight common methods, principal findings, limitations, and practical implications. Format in Markdown with headings.` },
       { id: "references", title: "References", meta: "Proper academic citations (APA-like) for the most important works.",
-        prompt: (q) => `List formatted academic references (APA style or similar) for the most important works on \"${q}\". Include DOI or URL if possible. Provide 8–12 references as a numbered list in Markdown.` },
+        prompt: (q) => `List formatted academic references (APA style or similar) for the most important works on \"${q}\". Include DOI or URL if possible. Provide 8–12 references as a numbered list in Markdown and on next line.` },
       { id: "related", title: "Related Topics", meta: "Subtopics, adjacent fields and keywords for further exploration.",
         prompt: (q) => `Suggest related subtopics, keywords, or adjacent research areas for \"${q}\". Provide 8–12 concise bullets and short explanations (<=12 words each). Output as a Markdown list.` }
     ];
