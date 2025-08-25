@@ -3,8 +3,5 @@
     "api/proxy.js": {
       "maxDuration": 30
     }
-  },
-  "env": {
-    "API_KEY": "@api_key"
   }
 }
