@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dobby Research Agent — Animated Reveal</title>
+  <title>Dobby Research Agent — Enhanced Edition</title>
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@700&display=swap" rel="stylesheet">
@@ -19,6 +19,8 @@
       --accent-2: #2244aa;
       --muted: #6b7280;
       --danger: #b91c1c;
+      --success: #059669;
+      --warning: #d97706;
       --glass: rgba(34,102,255,0.08);
       --radius: 12px;
     }
@@ -44,7 +46,7 @@
 
     .mainWrap {
       width: 100%;
-      max-width: 1000px;
+      max-width: 1200px;
     }
 
     /* Search container card */
@@ -86,6 +88,45 @@
     .title .name { font-family: 'Merriweather', serif; font-size:18px; color:#07103a; }
     .title .tag { color:var(--muted); font-size:13px; margin-top:4px; }
 
+    /* Advanced Search Options */
+    .advanced-options {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--glass);
+      border-radius: var(--radius);
+      border: 1px solid rgba(34,102,255,0.1);
+    }
+
+    .advanced-options.visible {
+      display: block;
+    }
+
+    .advanced-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      color: var(--accent-2);
+      font-size: 14px;
+    }
+
+    .form-group select, .form-group input {
+      padding: 8px 12px;
+      border: 1px solid #e6e9ef;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
     .searchRow {
       display:flex;
       gap:12px;
@@ -120,6 +161,7 @@
       border:none; cursor:pointer;
       font-weight:600;
       font-size:15px;
+      transition: all 0.2s ease;
     }
 
     .btn.primary {
@@ -132,11 +174,149 @@
       border:1px solid #e6e9ef;
       color:var(--muted);
     }
+    .btn.success {
+      background: var(--success);
+      color: white;
+    }
+    .btn.warning {
+      background: var(--warning);
+      color: white;
+    }
     .small {
       font-size:13px; padding:8px 10px; border-radius:8px;
     }
 
-    /* Sections grid - initially hidden */
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Search History */
+    .search-history {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid #e6e9ef;
+    }
+
+    .search-history.visible {
+      display: block;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      margin: 4px 0;
+      background: var(--glass);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .history-item:hover {
+      background: rgba(34,102,255,0.12);
+    }
+
+    .history-text {
+      flex: 1;
+      font-size: 14px;
+      color: var(--accent-2);
+    }
+
+    .history-date {
+      font-size: 12px;
+      color: var(--muted);
+      margin-right: 8px;
+    }
+
+    .history-delete {
+      background: none;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+    }
+
+    /* AI Assistant Chat */
+    .ai-chat {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 350px;
+      height: 400px;
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      border: 1px solid #e6e9ef;
+      z-index: 1000;
+      flex-direction: column;
+    }
+
+    .ai-chat.visible {
+      display: flex;
+    }
+
+    .chat-header {
+      padding: 16px;
+      background: var(--accent);
+      color: white;
+      border-radius: var(--radius) var(--radius) 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      max-height: 250px;
+    }
+
+    .chat-message {
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      max-width: 80%;
+    }
+
+    .chat-message.user {
+      background: var(--glass);
+      margin-left: auto;
+    }
+
+    .chat-message.ai {
+      background: #f1f5f9;
+    }
+
+    .chat-input-container {
+      padding: 16px;
+      border-top: 1px solid #e6e9ef;
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #e6e9ef;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    /* Sections grid */
     .sections {
       display:grid;
       grid-template-columns: 1fr;
@@ -159,6 +339,10 @@
       .sections { grid-template-columns: 1fr 1fr; }
       .controls { width:260px; }
       header.app { gap:20px; }
+    }
+
+    @media(min-width:1200px){
+      .sections { grid-template-columns: repeat(3, 1fr); }
     }
 
     /* Section card */
@@ -190,6 +374,12 @@
     .sectionHeader h2 { margin:0; font-size:16px; color:var(--accent-2); }
     .sectionHeader .meta { color:var(--muted); font-size:13px; }
 
+    .section-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
     .sectionBody {
       padding:18px;
       font-size:15px;
@@ -217,6 +407,189 @@
     .chip { font-size:13px; padding:6px 10px; border-radius:999px; background:var(--glass); color:var(--accent-2); border:1px solid rgba(34,102,255,0.07); }
     .error { color:var(--danger); background:#fff5f5; padding:10px; border-radius:8px; border-left:4px solid var(--danger); }
 
+    /* Progress Bar */
+    .progress-container {
+      display: none;
+      margin-top: 16px;
+      background: #e6e9ef;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 6px;
+    }
+
+    .progress-container.visible {
+      display: block;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    /* Search Suggestions */
+    .search-suggestions {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border: 1px solid #e6e9ef;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 100;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .search-suggestions.visible {
+      display: block;
+    }
+
+    .suggestion-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.2s ease;
+    }
+
+    .suggestion-item:hover {
+      background: var(--glass);
+    }
+
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Floating Action Button */
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(34,102,255,0.4);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    .fab:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(34,102,255,0.6);
+    }
+
+    /* Citation Generator */
+    .citation-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .citation-modal.visible {
+      display: flex;
+    }
+
+    .citation-content {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .citation-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .citation-text {
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      border: 1px solid #e6e9ef;
+    }
+
+    /* Export Options */
+    .export-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    /* Notes System */
+    .notes-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 300px;
+      height: 100vh;
+      background: var(--card);
+      border-left: 1px solid #e6e9ef;
+      box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+      z-index: 998;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .notes-panel.visible {
+      display: block;
+    }
+
+    .note-item {
+      background: var(--glass);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(34,102,255,0.1);
+    }
+
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .note-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--accent-2);
+    }
+
+    .note-text {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
     /* markdown */
     .md a { color:var(--accent); text-decoration:none; }
     .md a:hover { text-decoration:underline; }
@@ -228,7 +601,7 @@
     .footerTip { margin-top:12px; font-size:13px; color:var(--muted); }
     
     /* Compare and download options */
-    .compare-options {
+    .compare-options, .download-options {
       display: none;
       margin-top: 20px;
       padding: 16px;
@@ -237,11 +610,11 @@
       border: 1px solid rgba(34,102,255,0.1);
     }
     
-    .compare-options.visible {
+    .compare-options.visible, .download-options.visible {
       display: block;
     }
     
-    .compare-header {
+    .compare-header, .download-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -265,33 +638,10 @@
       height: 16px;
     }
     
-    .compare-actions {
+    .compare-actions, .download-buttons {
       display: flex;
       gap: 10px;
       margin-top: 16px;
-      flex-wrap: wrap;
-    }
-    
-    .download-options {
-      display: none;
-      margin-top: 20px;
-      padding: 16px;
-      background: var(--glass);
-      border-radius: var(--radius);
-      border: 1px solid rgba(34,102,255,0.1);
-    }
-    
-    .download-options.visible {
-      display: block;
-    }
-    
-    .download-header {
-      margin-bottom: 12px;
-    }
-    
-    .download-buttons {
-      display: flex;
-      gap: 10px;
       flex-wrap: wrap;
     }
     
@@ -311,6 +661,10 @@
         flex: 1;
       }
       
+      .advanced-grid {
+        grid-template-columns: 1fr;
+      }
+      
       .compare-checkboxes {
         grid-template-columns: 1fr;
       }
@@ -328,6 +682,18 @@
       .sectionHeader .actions {
         align-self: flex-end;
       }
+      
+      .ai-chat {
+        width: 90vw;
+        height: 70vh;
+        right: 5vw;
+        bottom: 20px;
+      }
+      
+      .notes-panel {
+        width: 100vw;
+        left: 0;
+      }
     }
   </style>
 </head>
@@ -341,17 +707,73 @@
           <div class="logo" aria-hidden="true">DR</div>
           <div class="title">
             <div id="appTitle" class="name">Dobby Research Agent</div>
-            <div class="tag">Academic summaries • papers • references</div>
+            <div class="tag">Enhanced with AI chat • citations • notes • history</div>
           </div>
           <div style="flex:1"></div>
+          <button id="advancedToggle" class="btn ghost small">⚙️ Advanced</button>
         </header>
 
-        <div class="searchRow" role="search" aria-label="Search research">
+        <!-- Search Suggestions -->
+        <div id="searchSuggestions" class="search-suggestions">
+          <!-- Populated by JavaScript -->
+        </div>
+
+        <div class="searchRow" style="position: relative;" role="search" aria-label="Search research">
           <textarea id="query" aria-label="Search query" placeholder="e.g., 'federated learning in healthcare', 'graph neural networks for chemistry'"></textarea>
 
           <div class="controls" aria-hidden="false">
             <button id="searchBtn" class="btn primary">🔎 Search</button>
             <button id="clearBtn" class="btn ghost small">Clear</button>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div id="progressContainer" class="progress-container">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+
+        <!-- Advanced Options -->
+        <div id="advancedOptions" class="advanced-options">
+          <div class="advanced-grid">
+            <div class="form-group">
+              <label for="academicLevel">Academic Level</label>
+              <select id="academicLevel">
+                <option value="general">General</option>
+                <option value="undergraduate">Undergraduate</option>
+                <option value="graduate">Graduate</option>
+                <option value="expert">Expert/PhD</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="timeRange">Time Range</label>
+              <select id="timeRange">
+                <option value="all">All Time</option>
+                <option value="recent">Recent (2020+)</option>
+                <option value="5years">Last 5 Years</option>
+                <option value="decade">Last 10 Years</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="paperCount">Papers to Find</label>
+              <input type="number" id="paperCount" min="3" max="15" value="6">
+            </div>
+            <div class="form-group">
+              <label for="focusArea">Focus Area</label>
+              <select id="focusArea">
+                <option value="balanced">Balanced</option>
+                <option value="theory">Theory Heavy</option>
+                <option value="practical">Application Focused</option>
+                <option value="methodology">Methodology</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search History -->
+        <div id="searchHistory" class="search-history">
+          <h3>Recent Searches</h3>
+          <div id="historyList">
+            <!-- Populated by JavaScript -->
           </div>
         </div>
         
@@ -374,12 +796,14 @@
         <!-- Download Options -->
         <div id="downloadOptions" class="download-options">
           <div class="download-header">
-            <h3>Download Results</h3>
-          </div>
-          <div class="download-buttons">
-            <button id="downloadTxt" class="btn primary small">Download as Text</button>
-            <button id="downloadMd" class="btn primary small">Download as Markdown</button>
+            <h3>Export Results</h3>
             <button id="closeDownload" class="btn ghost small">Close</button>
+          </div>
+          <div class="export-options">
+            <button id="downloadTxt" class="btn primary small">📄 Text</button>
+            <button id="downloadMd" class="btn primary small">📝 Markdown</button>
+            <button id="downloadPdf" class="btn success small">📑 PDF</button>
+            <button id="downloadBib" class="btn warning small">📚 BibTeX</button>
           </div>
         </div>
       </div>
@@ -391,34 +815,122 @@
       
       <!-- Global Actions -->
       <div id="globalActions" style="display: none; margin-top: 20px;">
-        <button id="showCompare" class="btn ghost small">Compare Sections</button>
-        <button id="showDownload" class="btn ghost small">Download Results</button>
+        <button id="showCompare" class="btn ghost small">🔍 Compare Sections</button>
+        <button id="showDownload" class="btn ghost small">💾 Export Results</button>
+        <button id="generateCitations" class="btn ghost small">📖 Generate Citations</button>
+        <button id="toggleHistory" class="btn ghost small">📜 Search History</button>
       </div>
 
-      <div class="footerTip">Tip: Press <kbd>Enter</kbd> (without Shift) to submit quickly.</div>
+      <div class="footerTip">💡 Tip: Press <kbd>Enter</kbd> to search • Use advanced options for better results • Click the chat button for AI assistance</div>
+    </div>
+  </div>
+
+  <!-- Floating Action Button for AI Chat -->
+  <button id="chatFab" class="fab">💬</button>
+
+  <!-- AI Chat Panel -->
+  <div id="aiChat" class="ai-chat">
+    <div class="chat-header">
+      <div>AI Research Assistant</div>
+      <button id="closeChatBtn" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">×</button>
+    </div>
+    <div id="chatMessages" class="chat-messages">
+      <div class="chat-message ai">
+        Hi! I'm your AI research assistant. I can help you:
+        <ul>
+          <li>Refine your search queries</li>
+          <li>Explain complex concepts</li>
+          <li>Suggest related topics</li>
+          <li>Help with citations</li>
+        </ul>
+        What would you like to know?
+      </div>
+    </div>
+    <div class="chat-input-container">
+      <input type="text" id="chatInput" class="chat-input" placeholder="Ask me anything...">
+      <button id="chatSendBtn" class="btn primary small">Send</button>
+    </div>
+  </div>
+
+  <!-- Notes Panel -->
+  <div id="notesPanel" class="notes-panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3>Research Notes</h3>
+      <button id="closeNotesBtn" style="background: none; border: none; font-size: 20px; cursor: pointer;">×</button>
+    </div>
+    <div>
+      <textarea id="noteInput" placeholder="Add a research note..." style="width: 100%; height: 80px; padding: 12px; border: 1px solid #e6e9ef; border-radius: 8px; resize: vertical; margin-bottom: 12px;"></textarea>
+      <button id="addNoteBtn" class="btn primary small" style="width: 100%; margin-bottom: 20px;">Add Note</button>
+    </div>
+    <div id="notesList">
+      <!-- Notes will be populated here -->
+    </div>
+  </div>
+
+  <!-- Citation Modal -->
+  <div id="citationModal" class="citation-modal">
+    <div class="citation-content">
+      <div class="citation-header">
+        <h3>Generated Citations</h3>
+        <button id="closeCitationBtn" class="btn ghost small">Close</button>
+      </div>
+      <div id="citationOutput">
+        <!-- Citations will be populated here -->
+      </div>
     </div>
   </div>
 
   <script>
-    // Configuration - API endpoint is now our proxy
+    // Configuration - API endpoint
     const PROXY_URL = '/api/proxy';
     const MODEL = "accounts/sentientfoundation/models/dobby-unhinged-llama-3-3-70b-new";
 
     const SECTIONS = [
-      { id: "papers", title: "Papers", meta: "Top 5–7 relevant academic papers (title, authors, year, link if available).",
-        prompt: (q) => `List 6 key academic papers about \"${q}\". For each paper include: Title, Authors, Year, short one-line description (<=20 words) and a link where available. Output in Markdown list format and on next line.` },
-      { id: "summary", title: "Summary", meta: "Concise overview of main findings, methods, and open questions.",
-        prompt: (q) => `Provide a concise but comprehensive summary (3–6 short paragraphs) of the current state of research on \"${q}\". Highlight common methods, principal findings, limitations, and practical implications. Format in Markdown with headings.` },
-      { id: "references", title: "References", meta: "Proper academic citations (APA-like) for the most important works.",
-        prompt: (q) => `List formatted academic references (APA style or similar) for the most important works on \"${q}\". Include DOI or URL if possible. Provide 8–12 references as a numbered list in Markdown and on next line.` },
-      { id: "related", title: "Related Topics", meta: "Subtopics, adjacent fields and keywords for further exploration.",
-        prompt: (q) => `Suggest related subtopics, keywords, or adjacent research areas for \"${q}\". Provide 8–12 concise bullets and short explanations (<=12 words each). Output as a Markdown list.` }
+      { id: "papers", title: "📚 Papers", meta: "Top relevant academic papers with metadata.",
+        prompt: (q, opts) => `Find ${opts.paperCount} key academic papers about "${q}" ${opts.timeRange !== 'all' ? `published in the ${opts.timeRange}` : ''}. Focus on ${opts.focusArea} aspects. For each paper include: Title, Authors, Year, Journal/Conference, DOI/URL if available, and a brief description. Format in Markdown list.` },
+      { id: "summary", title: "📖 Summary", meta: "Comprehensive overview tailored to your level.",
+        prompt: (q, opts) => `Provide a ${opts.academicLevel}-level summary of "${q}" research. Include current state, key findings, methodologies, challenges, and future directions. Use ${opts.focusArea} perspective. Format with clear headings in Markdown.` },
+      { id: "methods", title: "🔬 Methods", meta: "Research methodologies and approaches.",
+        prompt: (q, opts) => `Describe the main research methodologies used in "${q}" studies. Include experimental designs, data collection methods, analysis techniques, and evaluation metrics. Explain at ${opts.academicLevel} level. Format in Markdown.` },
+      { id: "applications", title: "🚀 Applications", meta: "Real-world applications and use cases.",
+        prompt: (q, opts) => `List and explain practical applications of "${q}" research. Include current implementations, industry adoption, case studies, and potential future applications. Focus on ${opts.focusArea} aspects. Format in Markdown.` },
+      { id: "references", title: "📑 References", meta: "Formatted academic citations.",
+        prompt: (q, opts) => `Generate properly formatted academic references (APA style) for the most important works on "${q}" ${opts.timeRange !== 'all' ? `from the ${opts.timeRange}` : ''}. Include DOI/URL where available. Provide ${Math.min(opts.paperCount + 4, 15)} references as a numbered list.` },
+      { id: "related", title: "🔗 Related Topics", meta: "Connected research areas and keywords.",
+        prompt: (q, opts) => `Identify related research topics, subtopics, and keywords connected to "${q}". Include interdisciplinary connections, emerging areas, and potential research directions. Organize by relevance and provide brief explanations. Format in Markdown.` },
+      { id: "trends", title: "📈 Trends", meta: "Current research trends and future directions.",
+        prompt: (q, opts) => `Analyze current research trends in "${q}" ${opts.timeRange !== 'all' ? `focusing on the ${opts.timeRange}` : ''}. Include emerging methodologies, hot topics, funding patterns, and predicted future directions. Present at ${opts.academicLevel} level in Markdown format.` },
+      { id: "datasets", title: "💾 Datasets", meta: "Available datasets and resources.",
+        prompt: (q, opts) => `List important datasets, benchmarks, and resources available for "${q}" research. Include dataset descriptions, access information, licensing, and typical use cases. Format as organized Markdown list with links where possible.` }
     ];
 
-    // State to store section contents
-    let sectionContents = {};
+    // Enhanced search suggestions
+    const SEARCH_SUGGESTIONS = [
+      "machine learning in healthcare",
+      "quantum computing algorithms",
+      "climate change mitigation strategies",
+      "CRISPR gene editing applications",
+      "natural language processing",
+      "blockchain technology",
+      "artificial neural networks",
+      "renewable energy systems",
+      "computational biology",
+      "robotics and automation",
+      "deep learning architectures",
+      "cybersecurity frameworks",
+      "biomedical engineering",
+      "sustainable agriculture",
+      "space exploration technologies"
+    ];
 
-    // dom refs
+    // State management
+    let sectionContents = {};
+    let searchHistoryData = JSON.parse(localStorage.getItem('dobbySearchHistory') || '[]');
+    let researchNotes = JSON.parse(localStorage.getItem('dobbyResearchNotes') || '[]');
+    let currentSearchQuery = '';
+    let searchProgress = 0;
+
+    // DOM references
     const sectionsEl = document.getElementById('sections');
     const searchCard = document.getElementById('searchCard');
     const pageRoot = document.getElementById('pageRoot');
@@ -426,6 +938,26 @@
     const clearBtn = document.getElementById('clearBtn');
     const queryInput = document.getElementById('query');
     const globalActions = document.getElementById('globalActions');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    
+    // Advanced options
+    const advancedToggle = document.getElementById('advancedToggle');
+    const advancedOptions = document.getElementById('advancedOptions');
+    const academicLevel = document.getElementById('academicLevel');
+    const timeRange = document.getElementById('timeRange');
+    const paperCount = document.getElementById('paperCount');
+    const focusArea = document.getElementById('focusArea');
+    
+    // Search suggestions
+    const searchSuggestions = document.getElementById('searchSuggestions');
+    
+    // Search history
+    const toggleHistory = document.getElementById('toggleHistory');
+    const searchHistoryPanel = document.getElementById('searchHistory');
+    const historyList = document.getElementById('historyList');
+    
+    // Compare and download
     const showCompare = document.getElementById('showCompare');
     const showDownload = document.getElementById('showDownload');
     const compareOptions = document.getElementById('compareOptions');
@@ -436,10 +968,191 @@
     const deselectAllBtn = document.getElementById('deselectAllBtn');
     const closeCompare = document.getElementById('closeCompare');
     const closeDownload = document.getElementById('closeDownload');
+    
+    // Export buttons
     const downloadTxt = document.getElementById('downloadTxt');
     const downloadMd = document.getElementById('downloadMd');
+    const downloadPdf = document.getElementById('downloadPdf');
+    const downloadBib = document.getElementById('downloadBib');
+    
+    // Citations
+    const generateCitations = document.getElementById('generateCitations');
+    const citationModal = document.getElementById('citationModal');
+    const citationOutput = document.getElementById('citationOutput');
+    const closeCitationBtn = document.getElementById('closeCitationBtn');
+    
+    // AI Chat
+    const chatFab = document.getElementById('chatFab');
+    const aiChat = document.getElementById('aiChat');
+    const closeChatBtn = document.getElementById('closeChatBtn');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const chatSendBtn = document.getElementById('chatSendBtn');
+    
+    // Notes
+    const notesPanel = document.getElementById('notesPanel');
+    const closeNotesBtn = document.getElementById('closeNotesBtn');
+    const noteInput = document.getElementById('noteInput');
+    const addNoteBtn = document.getElementById('addNoteBtn');
+    const notesList = document.getElementById('notesList');
 
-    // helper: create skeleton section DOM
+    // Utility Functions
+    function updateProgress(percentage) {
+      progressBar.style.width = percentage + '%';
+    }
+
+    function showProgress() {
+      progressContainer.classList.add('visible');
+      updateProgress(0);
+    }
+
+    function hideProgress() {
+      progressContainer.classList.remove('visible');
+    }
+
+    function addToSearchHistory(query) {
+      const historyItem = {
+        query: query,
+        timestamp: new Date().toISOString(),
+        id: Date.now()
+      };
+      searchHistoryData.unshift(historyItem);
+      searchHistoryData = searchHistoryData.slice(0, 10); // Keep only last 10
+      localStorage.setItem('dobbySearchHistory', JSON.stringify(searchHistoryData));
+      renderSearchHistory();
+    }
+
+    function renderSearchHistory() {
+      historyList.innerHTML = '';
+      searchHistoryData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML = `
+          <span class="history-text">${item.query}</span>
+          <span class="history-date">${new Date(item.timestamp).toLocaleDateString()}</span>
+          <button class="history-delete" onclick="removeFromHistory(${item.id})">×</button>
+        `;
+        div.addEventListener('click', (e) => {
+          if (e.target.classList.contains('history-delete')) return;
+          queryInput.value = item.query;
+          searchHistoryPanel.classList.remove('visible');
+        });
+        historyList.appendChild(div);
+      });
+    }
+
+    function removeFromHistory(id) {
+      searchHistoryData = searchHistoryData.filter(item => item.id !== id);
+      localStorage.setItem('dobbySearchHistory', JSON.stringify(searchHistoryData));
+      renderSearchHistory();
+    }
+
+    function showSearchSuggestions() {
+      const query = queryInput.value.toLowerCase().trim();
+      if (query.length < 2) {
+        searchSuggestions.classList.remove('visible');
+        return;
+      }
+
+      const filtered = SEARCH_SUGGESTIONS.filter(s => 
+        s.toLowerCase().includes(query)
+      ).slice(0, 5);
+
+      if (filtered.length === 0) {
+        searchSuggestions.classList.remove('visible');
+        return;
+      }
+
+      searchSuggestions.innerHTML = '';
+      filtered.forEach(suggestion => {
+        const div = document.createElement('div');
+        div.className = 'suggestion-item';
+        div.textContent = suggestion;
+        div.addEventListener('click', () => {
+          queryInput.value = suggestion;
+          searchSuggestions.classList.remove('visible');
+        });
+        searchSuggestions.appendChild(div);
+      });
+
+      searchSuggestions.classList.add('visible');
+    }
+
+    // AI Chat Functions
+    function addChatMessage(message, isUser = false) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `chat-message ${isUser ? 'user' : 'ai'}`;
+      messageDiv.textContent = message;
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function sendChatMessage() {
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      addChatMessage(message, true);
+      chatInput.value = '';
+
+      // Simple AI response simulation - in real implementation, this would call the API
+      const responses = [
+        "That's an interesting question! Based on your current research on '" + currentSearchQuery + "', I'd suggest looking into related methodologies.",
+        "Great point! You might want to explore the intersection between your topic and emerging technologies.",
+        "I can help you refine that search query. Try being more specific about the time period or methodology you're interested in.",
+        "For better results, consider using the advanced search options to filter by academic level and focus area.",
+        "That concept is related to several key papers in your current results. Would you like me to help you find more specific references?"
+      ];
+      
+      setTimeout(() => {
+        const response = responses[Math.floor(Math.random() * responses.length)];
+        addChatMessage(response);
+      }, 1000);
+    }
+
+    // Notes Functions
+    function addNote() {
+      const noteText = noteInput.value.trim();
+      if (!noteText) return;
+
+      const note = {
+        id: Date.now(),
+        text: noteText,
+        query: currentSearchQuery,
+        timestamp: new Date().toISOString()
+      };
+
+      researchNotes.unshift(note);
+      localStorage.setItem('dobbyResearchNotes', JSON.stringify(researchNotes));
+      noteInput.value = '';
+      renderNotes();
+    }
+
+    function renderNotes() {
+      notesList.innerHTML = '';
+      researchNotes.forEach(note => {
+        const noteDiv = document.createElement('div');
+        noteDiv.className = 'note-item';
+        noteDiv.innerHTML = `
+          <div class="note-header">
+            <span class="note-title">${note.query || 'General Note'}</span>
+            <button onclick="removeNote(${note.id})" style="background: none; border: none; color: var(--danger); cursor: pointer;">×</button>
+          </div>
+          <div class="note-text">${note.text}</div>
+          <div style="font-size: 11px; color: var(--muted); margin-top: 8px;">
+            ${new Date(note.timestamp).toLocaleDateString()}
+          </div>
+        `;
+        notesList.appendChild(noteDiv);
+      });
+    }
+
+    function removeNote(id) {
+      researchNotes = researchNotes.filter(note => note.id !== id);
+      localStorage.setItem('dobbyResearchNotes', JSON.stringify(researchNotes));
+      renderNotes();
+    }
+
+    // Section management functions
     function createSectionDOM(s) {
       const div = document.createElement('div');
       div.className = 'section';
@@ -450,14 +1163,16 @@
             <h2 id="h-${s.id}">${s.title}</h2>
             <div class="meta">${s.meta}</div>
           </div>
-          <div class="actions">
+          <div class="section-actions">
+            <button class="btn ghost small" onclick="addSectionToNotes('${s.id}')">📝 Note</button>
             <button class="toggleBtn" aria-expanded="true" data-target="${s.id}">Hide ▾</button>
           </div>
         </div>
         <div class="sectionBody" id="body-${s.id}">
           <div class="loader"><div class="spinner" aria-hidden="true"></div><div class="loadingText">Waiting to query...</div></div>
         </div>`;
-      // toggle
+      
+      // Toggle functionality
       const toggle = div.querySelector('.toggleBtn');
       const body = div.querySelector(`#body-${s.id}`);
       toggle.addEventListener('click', () => {
@@ -474,7 +1189,35 @@
       return div;
     }
 
-    // render skeleton sections (once)
+    function addSectionToNotes(sectionId) {
+      const section = SECTIONS.find(s => s.id === sectionId);
+      const content = sectionContents[sectionId];
+      if (!content) return;
+
+      const note = {
+        id: Date.now(),
+        text: `${section.title} findings: ${content.substring(0, 200)}...`,
+        query: currentSearchQuery,
+        timestamp: new Date().toISOString()
+      };
+
+      researchNotes.unshift(note);
+      localStorage.setItem('dobbyResearchNotes', JSON.stringify(researchNotes));
+      renderNotes();
+      
+      // Show brief confirmation
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = '✓ Added';
+      btn.style.background = 'var(--success)';
+      btn.style.color = 'white';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 1500);
+    }
+
     function renderSectionsSkeleton() {
       sectionsEl.innerHTML = '';
       for (const s of SECTIONS) {
@@ -483,7 +1226,6 @@
       }
     }
 
-    // render md into body
     function renderMarkdownTo(el, md) {
       try {
         el.innerHTML = `<div class="md">${marked.parse(md)}</div>`;
@@ -492,7 +1234,6 @@
       }
     }
 
-    // set loading text
     function setSectionLoading(id, text = 'Loading...') {
       const body = document.getElementById(`body-${id}`);
       if (!body) return;
@@ -505,15 +1246,15 @@
       body.innerHTML = `<div class="error">❌ ${message}</div>`;
     }
 
-    // API call for a section through proxy
-    async function fetchSection(section, query) {
+    // API call function
+    async function fetchSection(section, query, options) {
       const payload = {
         model: MODEL,
         messages: [
           { role: "system", content: "You are Dobby Research Agent, an expert academic research assistant. Format output in Markdown, be concise and accurate." },
-          { role: "user", content: section.prompt(query) }
+          { role: "user", content: section.prompt(query, options) }
         ],
-        max_tokens: 700,
+        max_tokens: 800,
         temperature: 0.2
       };
 
@@ -536,38 +1277,208 @@
       }
     }
 
-    // Show compare options
-    function showCompareOptions() {
-      compareOptions.classList.add('visible');
-      // Populate checkboxes
-      compareCheckboxes.innerHTML = '';
-      SECTIONS.forEach(section => {
-        const checkboxDiv = document.createElement('div');
-        checkboxDiv.className = 'compare-checkbox';
-        checkboxDiv.innerHTML = `
-          <input type="checkbox" id="compare-${section.id}" value="${section.id}">
-          <label for="compare-${section.id}">${section.title}</label>
-        `;
-        compareCheckboxes.appendChild(checkboxDiv);
+    // Main search function
+    async function runSearch() {
+      const query = queryInput.value.trim();
+      if (!query) { 
+        alert('Please enter a research topic.'); 
+        return; 
+      }
+
+      currentSearchQuery = query;
+      sectionContents = {};
+
+      // Get advanced options
+      const options = {
+        academicLevel: academicLevel.value,
+        timeRange: timeRange.value,
+        paperCount: parseInt(paperCount.value),
+        focusArea: focusArea.value
+      };
+
+      // Add to search history
+      addToSearchHistory(query);
+
+      // Animation and UI updates
+      searchCard.classList.add('shrink');
+      pageRoot.classList.add('revealed');
+      showProgress();
+
+      renderSectionsSkeleton();
+
+      setTimeout(() => {
+        sectionsEl.classList.add('visible');
+        globalActions.style.display = 'block';
+
+        const sectionNodes = Array.from(sectionsEl.querySelectorAll('.section'));
+        sectionNodes.forEach((node, idx) => {
+          node.style.transitionDelay = `${idx * 90}ms`;
+          setTimeout(() => node.classList.add('visible'), idx * 90 + 60);
+        });
+      }, 180);
+
+      // Disable UI
+      searchBtn.disabled = true; 
+      searchBtn.textContent = 'Searching...';
+      clearBtn.disabled = true;
+
+      // Process sections
+      const totalSections = SECTIONS.length;
+      let completedSections = 0;
+
+      const tasks = SECTIONS.map(async (s, index) => {
+        try {
+          setSectionLoading(s.id, `🔎 Fetching ${s.title}...`);
+          
+          // Add small delay for better UX
+          await new Promise(resolve => setTimeout(resolve, index * 200));
+          
+          const content = await fetchSection(s, query, options);
+          sectionContents[s.id] = content;
+          
+          const body = document.getElementById(`body-${s.id}`);
+          if (!body) return;
+          
+          renderMarkdownTo(body, content);
+
+          // Add special features for certain sections
+          if (s.id === 'references') {
+            const footer = document.createElement('div');
+            footer.style.marginTop = '12px';
+            footer.style.display = 'flex';
+            footer.style.justifyContent = 'flex-end';
+            footer.style.gap = '8px';
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'btn small';
+            copyBtn.textContent = '📋 Copy references';
+            copyBtn.addEventListener('click', () => {
+              navigator.clipboard.writeText(content.replace(/\n{2,}/g, '\n\n')).then(() => {
+                copyBtn.textContent = '✓ Copied';
+                setTimeout(()=> copyBtn.textContent = '📋 Copy references', 1400);
+              });
+            });
+            footer.appendChild(copyBtn);
+            body.appendChild(footer);
+          }
+
+          completedSections++;
+          updateProgress((completedSections / totalSections) * 100);
+
+        } catch (err) {
+          setSectionError(s.id, err.message || 'Failed to fetch section.');
+          completedSections++;
+          updateProgress((completedSections / totalSections) * 100);
+        }
+      });
+
+      await Promise.all(tasks);
+
+      // Re-enable UI
+      searchBtn.disabled = false; 
+      searchBtn.textContent = '🔎 Search';
+      clearBtn.disabled = false;
+      hideProgress();
+    }
+
+    // Export Functions
+    function generateCitationsModal() {
+      const referencesContent = sectionContents['references'] || 'No references available.';
+      citationOutput.innerHTML = `
+        <div class="citation-text">${referencesContent}</div>
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button onclick="copyCitations()" class="btn primary small">📋 Copy</button>
+          <button onclick="downloadCitations()" class="btn ghost small">💾 Download</button>
+        </div>
+      `;
+      citationModal.classList.add('visible');
+    }
+
+    function copyCitations() {
+      const text = sectionContents['references'] || '';
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Citations copied to clipboard!');
       });
     }
 
-    // Hide compare options
-    function hideCompareOptions() {
-      compareOptions.classList.remove('visible');
+    function downloadCitations() {
+      const content = sectionContents['references'] || '';
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `citations-${currentSearchQuery.substring(0, 20)}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
 
-    // Show download options
-    function showDownloadOptions() {
-      downloadOptions.classList.add('visible');
+    function downloadText() {
+      const content = Object.entries(sectionContents)
+        .map(([id, content]) => {
+          const section = SECTIONS.find(s => s.id === id);
+          return `# ${section.title}\n\n${content.replace(/<[^>]*>/g, '')}`;
+        })
+        .join('\n\n---\n\n');
+      
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `research-${currentSearchQuery.substring(0, 20)}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      hideDownloadOptions();
     }
 
-    // Hide download options
-    function hideDownloadOptions() {
-      downloadOptions.classList.remove('visible');
+    function downloadMarkdown() {
+      const content = Object.entries(sectionContents)
+        .map(([id, content]) => {
+          const section = SECTIONS.find(s => s.id === id);
+          return `# ${section.title}\n\n${content}`;
+        })
+        .join('\n\n---\n\n');
+      
+      const blob = new Blob([content], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `research-${currentSearchQuery.substring(0, 20)}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      hideDownloadOptions();
     }
 
-    // Compare selected sections
+    function downloadPDF() {
+      // This would require a PDF library like jsPDF in a real implementation
+      alert('PDF export feature coming soon! Use Markdown export and convert to PDF using your preferred tool.');
+      hideDownloadOptions();
+    }
+
+    function downloadBibTeX() {
+      // Extract references and convert to BibTeX format
+      const referencesContent = sectionContents['references'] || '';
+      // This is a simplified BibTeX generation - a real implementation would parse the references properly
+      const bibContent = `% Generated BibTeX for: ${currentSearchQuery}\n% Generated on: ${new Date().toISOString()}\n\n${referencesContent}`;
+      
+      const blob = new Blob([bibContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `references-${currentSearchQuery.substring(0, 20)}.bib`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      hideDownloadOptions();
+    }
+
+    // Compare function
     function compareSections() {
       const selectedSections = [];
       document.querySelectorAll('.compare-checkbox input:checked').forEach(checkbox => {
@@ -579,28 +1490,22 @@
         return;
       }
       
-      // Create a comparison view
       const comparisonContent = selectedSections.map(sectionId => {
-        return `## ${SECTIONS.find(s => s.id === sectionId).title}\n\n${sectionContents[sectionId] || 'No content available'}`;
+        const section = SECTIONS.find(s => s.id === sectionId);
+        return `## ${section.title}\n\n${sectionContents[sectionId] || 'No content available'}`;
       }).join('\n\n---\n\n');
       
-      // Create a modal or replace the current view with comparison
       const comparisonModal = document.createElement('div');
-      comparisonModal.style.position = 'fixed';
-      comparisonModal.style.top = '0';
-      comparisonModal.style.left = '0';
-      comparisonModal.style.width = '100%';
-      comparisonModal.style.height = '100%';
-      comparisonModal.style.backgroundColor = 'rgba(0,0,0,0.8)';
-      comparisonModal.style.zIndex = '1000';
-      comparisonModal.style.overflow = 'auto';
-      comparisonModal.style.padding = '20px';
+      comparisonModal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8); z-index: 1000; overflow: auto; padding: 20px;
+      `;
       
       comparisonModal.innerHTML = `
-        <div style="background: white; padding: 20px; border-radius: 12px; max-width: 900px; margin: 0 auto;">
+        <div style="background: white; padding: 20px; border-radius: 12px; max-width: 1000px; margin: 0 auto;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2>Comparison View</h2>
-            <button id="closeComparison" style="background: var(--accent); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Close</button>
+            <h2>🔍 Comparison View</h2>
+            <button id="closeComparison" class="btn primary small">Close</button>
           </div>
           <div class="md">${marked.parse(comparisonContent)}</div>
         </div>
@@ -615,150 +1520,72 @@
       hideCompareOptions();
     }
 
-    // Download content as text file
-    function downloadText() {
-      const content = Object.entries(sectionContents)
-        .map(([id, content]) => {
-          const section = SECTIONS.find(s => s.id === id);
-          return `# ${section.title}\n\n${content.replace(/<[^>]*>/g, '')}`;
-        })
-        .join('\n\n---\n\n');
-      
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `research-${queryInput.value.trim().substring(0, 20)}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      hideDownloadOptions();
-    }
-
-    // Download content as markdown file
-    function downloadMarkdown() {
-      const content = Object.entries(sectionContents)
-        .map(([id, content]) => {
-          const section = SECTIONS.find(s => s.id === id);
-          return `# ${section.title}\n\n${content}`;
-        })
-        .join('\n\n---\n\n');
-      
-      const blob = new Blob([content], { type: 'text/markdown' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `research-${queryInput.value.trim().substring(0, 20)}.md`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      hideDownloadOptions();
-    }
-
-    // Run the search: animate, reveal, then fetch sections in parallel with per-section updates and staggered reveal
-    async function runSearch() {
-      const query = queryInput.value.trim();
-      if (!query) { alert('Please enter a research topic.'); return; }
-
-      // Reset section contents
-      sectionContents = {};
-
-      // Initial animation: shrink search card + push page into revealed state
-      searchCard.classList.add('shrink');
-      pageRoot.classList.add('revealed');
-
-      // ensure skeleton sections exist
-      renderSectionsSkeleton();
-
-      // delay small time so the user sees the motion
-      setTimeout(() => {
-        // show sections container
-        sectionsEl.classList.add('visible');
-        
-        // Show global actions
-        globalActions.style.display = 'block';
-
-        // staggered reveal of each card (CSS class toggles)
-        const sectionNodes = Array.from(sectionsEl.querySelectorAll('.section'));
-        sectionNodes.forEach((node, idx) => {
-          node.style.transitionDelay = `${idx * 90}ms`;
-          // add visible with a small timeout to allow transition-delay to apply
-          setTimeout(() => node.classList.add('visible'), idx * 90 + 60);
-        });
-      }, 180); // small buffer for card shrink start
-
-      // disable UI
-      searchBtn.disabled = true; searchBtn.textContent = 'Searching...';
-      clearBtn.disabled = true;
-
-      // kick off section API calls in parallel, but update each card independently
-      const tasks = SECTIONS.map(async (s) => {
-        try {
-          setSectionLoading(s.id, `🔎 Fetching ${s.title}...`);
-          const content = await fetchSection(s, query);
-          sectionContents[s.id] = content; // Store content for later use
-          const body = document.getElementById(`body-${s.id}`);
-          if (!body) return;
-          renderMarkdownTo(body, content);
-
-          // add copy for references
-          if (s.id === 'references') {
-            const footer = document.createElement('div');
-            footer.style.marginTop = '12px';
-            footer.style.display = 'flex';
-            footer.style.justifyContent = 'flex-end';
-            footer.style.gap = '8px';
-
-            const copyBtn = document.createElement('button');
-            copyBtn.className = 'btn small';
-            copyBtn.textContent = 'Copy references';
-            copyBtn.addEventListener('click', () => {
-              navigator.clipboard.writeText(content.replace(/\n{2,}/g, '\n\n')).then(() => {
-                copyBtn.textContent = 'Copied ✓';
-                setTimeout(()=> copyBtn.textContent = 'Copy references', 1400);
-              });
-            });
-            footer.appendChild(copyBtn);
-            body.appendChild(footer);
-          }
-
-        } catch (err) {
-          setSectionError(s.id, err.message || 'Failed to fetch section.');
-        }
+    // UI Helper Functions
+    function showCompareOptions() {
+      compareOptions.classList.add('visible');
+      compareCheckboxes.innerHTML = '';
+      SECTIONS.forEach(section => {
+        const checkboxDiv = document.createElement('div');
+        checkboxDiv.className = 'compare-checkbox';
+        checkboxDiv.innerHTML = `
+          <input type="checkbox" id="compare-${section.id}" value="${section.id}">
+          <label for="compare-${section.id}">${section.title}</label>
+        `;
+        compareCheckboxes.appendChild(checkboxDiv);
       });
-
-      await Promise.all(tasks).catch(()=>{/* per-section handled */});
-
-      // re-enable UI
-      searchBtn.disabled = false; searchBtn.textContent = 'Search';
-      clearBtn.disabled = false;
     }
 
-    // init skeleton on load (so the layout has something but hidden until search)
-    renderSectionsSkeleton();
+    function hideCompareOptions() {
+      compareOptions.classList.remove('visible');
+    }
 
-    // Event listeners
+    function showDownloadOptions() {
+      downloadOptions.classList.add('visible');
+    }
+
+    function hideDownloadOptions() {
+      downloadOptions.classList.remove('visible');
+    }
+
+    // Initialize
+    renderSectionsSkeleton();
+    renderSearchHistory();
+    renderNotes();
+
+    // Event Listeners
     searchBtn.addEventListener('click', runSearch);
     clearBtn.addEventListener('click', () => {
       queryInput.value = '';
-      // reset page to initial (centered) state
       searchCard.classList.remove('shrink');
       pageRoot.classList.remove('revealed');
       sectionsEl.classList.remove('visible');
       globalActions.style.display = 'none';
       hideCompareOptions();
       hideDownloadOptions();
-      // remove visible class from each card (reset)
+      hideProgress();
+      searchSuggestions.classList.remove('visible');
       document.querySelectorAll('.section').forEach(node => node.classList.remove('visible'));
-      // re-render skeleton (reset loading text)
       renderSectionsSkeleton();
     });
 
-    // Compare and download event listeners
+    // Advanced options toggle
+    advancedToggle.addEventListener('click', () => {
+      advancedOptions.classList.toggle('visible');
+      advancedToggle.textContent = advancedOptions.classList.contains('visible') ? '⚙️ Basic' : '⚙️ Advanced';
+    });
+
+    // Search suggestions
+    queryInput.addEventListener('input', showSearchSuggestions);
+    queryInput.addEventListener('blur', () => {
+      setTimeout(() => searchSuggestions.classList.remove('visible'), 200);
+    });
+
+    // Search history
+    toggleHistory.addEventListener('click', () => {
+      searchHistoryPanel.classList.toggle('visible');
+    });
+
+    // Compare and download
     showCompare.addEventListener('click', showCompareOptions);
     showDownload.addEventListener('click', showDownloadOptions);
     closeCompare.addEventListener('click', hideCompareOptions);
@@ -774,22 +1601,355 @@
         checkbox.checked = false;
       });
     });
+
+    // Export buttons
     downloadTxt.addEventListener('click', downloadText);
     downloadMd.addEventListener('click', downloadMarkdown);
+    downloadPdf.addEventListener('click', downloadPDF);
+    downloadBib.addEventListener('click', downloadBibTeX);
 
-    // submit on Enter (without shift)
-    queryInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); runSearch(); }
+    // Citations
+    generateCitations.addEventListener('click', generateCitationsModal);
+    closeCitationBtn.addEventListener('click', () => {
+      citationModal.classList.remove('visible');
     });
 
-    // auto-resize textarea
+    // AI Chat
+    chatFab.addEventListener('click', () => {
+      aiChat.classList.add('visible');
+      chatFab.style.display = 'none';
+    });
+    closeChatBtn.addEventListener('click', () => {
+      aiChat.classList.remove('visible');
+      chatFab.style.display = 'flex';
+    });
+    chatSendBtn.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendChatMessage();
+    });
+
+    // Notes
+    addNoteBtn.addEventListener('click', addNote);
+    closeNotesBtn.addEventListener('click', () => {
+      notesPanel.classList.remove('visible');
+    });
+    noteInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey) addNote();
+    });
+
+    // Notes FAB (create a second FAB for notes)
+    const notesFab = document.createElement('button');
+    notesFab.className = 'fab';
+    notesFab.innerHTML = '📝';
+    notesFab.style.bottom = '90px';
+    notesFab.style.width = '48px';
+    notesFab.style.height = '48px';
+    notesFab.style.fontSize = '20px';
+    notesFab.addEventListener('click', () => {
+      notesPanel.classList.add('visible');
+    });
+    document.body.appendChild(notesFab);
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ctrl/Cmd + Enter to search
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        runSearch();
+      }
+      
+      // Ctrl/Cmd + K to focus search
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        queryInput.focus();
+      }
+      
+      // Escape to close modals
+      if (e.key === 'Escape') {
+        aiChat.classList.remove('visible');
+        notesPanel.classList.remove('visible');
+        citationModal.classList.remove('visible');
+        searchSuggestions.classList.remove('visible');
+        chatFab.style.display = 'flex';
+      }
+    });
+
+    // Submit on Enter (without shift)
+    queryInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { 
+        e.preventDefault(); 
+        runSearch(); 
+      }
+    });
+
+    // Auto-resize textarea
     queryInput.addEventListener('input', function () {
       this.style.height = 'auto';
       this.style.height = (this.scrollHeight) + 'px';
     });
 
-    // small accessibility: focus textarea on load
-    window.addEventListener('load', () => setTimeout(()=> queryInput.focus(), 300));
+    // Focus textarea on load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        queryInput.focus();
+        renderSearchHistory();
+        renderNotes();
+      }, 300);
+    });
+
+    // Dark mode toggle (bonus feature)
+    const darkModeToggle = document.createElement('button');
+    darkModeToggle.className = 'btn ghost small';
+    darkModeToggle.innerHTML = '🌙';
+    darkModeToggle.style.position = 'absolute';
+    darkModeToggle.style.top = '20px';
+    darkModeToggle.style.right = '20px';
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      darkModeToggle.innerHTML = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+      localStorage.setItem('dobbyDarkMode', document.body.classList.contains('dark-mode'));
+    });
+    
+    // Load dark mode preference
+    if (localStorage.getItem('dobbyDarkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+      darkModeToggle.innerHTML = '☀️';
+    }
+    
+    document.querySelector('.mainWrap').appendChild(darkModeToggle);
+
+    // Accessibility improvements
+    queryInput.setAttribute('aria-describedby', 'searchHelp');
+    const searchHelp = document.createElement('div');
+    searchHelp.id = 'searchHelp';
+    searchHelp.className = 'sr-only';
+    searchHelp.textContent = 'Enter your research topic and press Enter to search. Use advanced options for more specific results.';
+    queryInput.parentNode.appendChild(searchHelp);
+
+    // Performance optimization: Debounce search suggestions
+    let suggestionTimeout;
+    const originalShowSuggestions = showSearchSuggestions;
+    showSearchSuggestions = function() {
+      clearTimeout(suggestionTimeout);
+      suggestionTimeout = setTimeout(originalShowSuggestions, 300);
+    };
+
+    // Export search state for sharing
+    function exportSearchState() {
+      const state = {
+        query: currentSearchQuery,
+        sections: sectionContents,
+        notes: researchNotes.filter(note => note.query === currentSearchQuery),
+        options: {
+          academicLevel: academicLevel.value,
+          timeRange: timeRange.value,
+          paperCount: paperCount.value,
+          focusArea: focusArea.value
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dobby-research-${currentSearchQuery.substring(0, 20)}-${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Add export state button to global actions
+    const exportStateBtn = document.createElement('button');
+    exportStateBtn.className = 'btn ghost small';
+    exportStateBtn.textContent = '💾 Export Session';
+    exportStateBtn.addEventListener('click', exportSearchState);
+    globalActions.appendChild(exportStateBtn);
+
+    // Animate elements on scroll (for better UX)
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    // Enhanced error handling
+    window.addEventListener('error', (e) => {
+      console.error('Application error:', e.error);
+      // Show user-friendly error message
+      const errorToast = document.createElement('div');
+      errorToast.style.cssText = `
+        position: fixed; top: 20px; right: 20px; 
+        background: var(--danger); color: white;
+        padding: 12px 16px; border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        z-index: 1002; font-size: 14px;
+      `;
+      errorToast.textContent = 'Something went wrong. Please try refreshing the page.';
+      document.body.appendChild(errorToast);
+      setTimeout(() => errorToast.remove(), 5000);
+    });
+
+    // Add service worker for offline functionality (if needed)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        // Register service worker for offline functionality
+        // This would be implemented in a separate service-worker.js file
+      });
+    }
+
+    // Global functions for onclick handlers
+    window.removeFromHistory = removeFromHistory;
+    window.removeNote = removeNote;
+    window.addSectionToNotes = addSectionToNotes;
+    window.copyCitations = copyCitations;
+    window.downloadCitations = downloadCitations;
+
+    // Initialize tooltips for better UX
+    function addTooltips() {
+      const tooltipElements = [
+        { element: chatFab, text: 'AI Research Assistant (Ctrl+C)' },
+        { element: notesFab, text: 'Research Notes (Ctrl+N)' },
+        { element: advancedToggle, text: 'Advanced Search Options' },
+        { element: searchBtn, text: 'Search (Ctrl+Enter)' },
+        { element: clearBtn, text: 'Clear and Reset' }
+      ];
+
+      tooltipElements.forEach(({ element, text }) => {
+        if (element) {
+          element.title = text;
+        }
+      });
+    }
+
+    addTooltips();
+
+    // Smart search suggestions based on current content
+    function generateSmartSuggestions(query) {
+      const suggestions = [];
+      
+      // Based on current sections content
+      if (sectionContents.summary) {
+        const keywords = extractKeywords(sectionContents.summary);
+        keywords.forEach(keyword => {
+          if (keyword.toLowerCase().includes(query.toLowerCase())) {
+            suggestions.push(keyword);
+          }
+        });
+      }
+      
+      return suggestions.slice(0, 3);
+    }
+
+    function extractKeywords(text) {
+      // Simple keyword extraction - in a real app, use NLP libraries
+      const words = text.toLowerCase().match(/\b\w{4,}\b/g) || [];
+      const frequency = {};
+      words.forEach(word => {
+        frequency[word] = (frequency[word] || 0) + 1;
+      });
+      
+      return Object.entries(frequency)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([word]) => word);
+    }
+
+    // Save and restore scroll position
+    function saveScrollPosition() {
+      localStorage.setItem('dobbyScrollPosition', window.scrollY);
+    }
+
+    function restoreScrollPosition() {
+      const position = localStorage.getItem('dobbyScrollPosition');
+      if (position) {
+        window.scrollTo(0, parseInt(position));
+      }
+    }
+
+    window.addEventListener('beforeunload', saveScrollPosition);
+    window.addEventListener('load', restoreScrollPosition);
+
+    console.log('🎉 Enhanced Dobby Research Agent loaded successfully!');
+    console.log('💡 Keyboard shortcuts:');
+    console.log('   Ctrl+Enter: Search');
+    console.log('   Ctrl+K: Focus search box');
+    console.log('   Escape: Close modals');
+    console.log('   Ctrl+Enter in notes: Add note');
   </script>
+
+  <!-- Add some CSS for dark mode -->
+  <style>
+    .dark-mode {
+      --bg: #1a1a1a;
+      --card: #2d2d2d;
+      --accent: #4d7fff;
+      --accent-2: #3d6fff;
+      color: #e0e0e0;
+    }
+
+    .dark-mode .sectionBody {
+      background: #333;
+    }
+
+    .dark-mode .md pre {
+      background: #2a2a2a;
+    }
+
+    .dark-mode .chat-message.ai {
+      background: #3a3a3a;
+    }
+
+    .dark-mode .note-item {
+      background: rgba(77, 127, 255, 0.1);
+    }
+
+    .dark-mode .search-suggestions,
+    .dark-mode .citation-content {
+      background: #2d2d2d;
+      border-color: #444;
+    }
+
+    .dark-mode .suggestion-item:hover,
+    .dark-mode .history-item:hover {
+      background: rgba(77, 127, 255, 0.15);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Loading animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section.visible {
+      animation: fadeInUp 0.5s ease forwards;
+    }
+
+    /* Smooth transitions */
+    * {
+      transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+    }
+  </style>
 </body>
 </html>
