@@ -1826,11 +1826,11 @@
          // Save PDF
          pdf.save(`research-${currentSearchQuery.substring(0, 20)}-${Date.now()}.pdf`);
          
-         // Reset button
-         downloadPdf.textContent = originalText;
-         downloadPdf.disabled = false;
-         
-         // Show success message
+                 // Reset button
+        downloadPdf.textContent = '📑 PDF';
+        downloadPdf.disabled = false;
+        
+        // Show success message
          const successToast = document.createElement('div');
          successToast.style.cssText = `
            position: fixed; top: 20px; right: 20px; 
@@ -1846,11 +1846,11 @@
        } catch (error) {
          console.error('PDF generation error:', error);
          
-         // Reset button
-         downloadPdf.textContent = originalText;
-         downloadPdf.disabled = false;
-         
-         // Show error message
+                 // Reset button
+        downloadPdf.textContent = '📑 PDF';
+        downloadPdf.disabled = false;
+        
+        // Show error message
          const errorToast = document.createElement('div');
          errorToast.style.cssText = `
            position: fixed; top: 20px; right: 20px; 
