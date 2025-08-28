@@ -671,9 +671,17 @@
     /* markdown */
     .md a { color:var(--accent); text-decoration:none; }
     .md a:hover { text-decoration:underline; }
-    .md h3 { margin-top:0.8em; color:#0b2a66; }
-    .md pre { background:#f6f8ff; padding:12px; border-radius:8px; overflow:auto; }
+    .md h2 { margin-top:1.2em; margin-bottom:0.8em; color:#0b2a66; font-size:1.4em; border-bottom:2px solid #eef2ff; padding-bottom:0.3em; }
+    .md h3 { margin-top:1em; margin-bottom:0.6em; color:#0b2a66; font-size:1.2em; }
+    .md h4 { margin-top:0.8em; margin-bottom:0.5em; color:#0b2a66; font-size:1.1em; }
+    .md pre { background:#f6f8ff; padding:12px; border-radius:8px; overflow:auto; border:1px solid #e6e9ef; }
     .md blockquote { border-left:4px solid #eef2ff; padding-left:12px; color:var(--muted); margin: 8px 0; background: #fbfdff; border-radius:6px; padding-top:8px; padding-bottom:8px; }
+    .md ul, .md ol { margin:0.5em 0; padding-left:1.5em; }
+    .md li { margin:0.3em 0; line-height:1.5; }
+    .md strong { color:#0b2a66; font-weight:600; }
+    .md em { color:var(--accent-2); font-style:italic; }
+    .md code { background:#f1f5f9; padding:2px 6px; border-radius:4px; font-family:'Courier New',monospace; font-size:0.9em; }
+    .md p { margin:0.8em 0; line-height:1.6; }
 
     /* small footer area */
     .footerTip { margin-top:12px; font-size:13px; color:var(--muted); }
@@ -970,21 +978,240 @@
 
     const SECTIONS = [
       { id: "papers", title: "📚 Papers", meta: "Top relevant academic papers with metadata.",
-        prompt: (q, opts) => `Find ${opts.paperCount} key academic papers about "${q}" ${opts.timeRange !== 'all' ? `published in the ${opts.timeRange}` : ''}. Focus on ${opts.focusArea} aspects. For each paper include: Title, Authors, Year, Journal/Conference, DOI/URL if available, and a brief description. Format in Markdown list.` },
+        prompt: (q, opts) => `Find ${opts.paperCount} key academic papers about "${q}" ${opts.timeRange !== 'all' ? `published in the ${opts.timeRange}` : ''}. Focus on ${opts.focusArea} aspects.
+
+**Format Requirements:**
+- Use clear, professional language
+- Present each paper in a structured format
+- Include: Title, Authors, Year, Journal/Conference, DOI/URL if available
+- Provide a concise but informative description (2-3 sentences)
+- Use proper Markdown formatting with headers and bullet points
+- Organize by relevance or recency
+- Ensure academic tone and precision
+
+**Structure:**
+## Key Research Papers
+
+### [Paper Title]
+- **Authors:** [Author names]
+- **Year:** [Year]
+- **Journal/Conference:** [Journal name]
+- **DOI:** [DOI if available]
+- **Summary:** [Clear, professional description of key contributions and findings]
+
+[Continue for each paper...]` },
       { id: "summary", title: "📖 Summary", meta: "Comprehensive overview tailored to your level.",
-        prompt: (q, opts) => `Provide a ${opts.academicLevel}-level summary of "${q}" research. Include current state, key findings, methodologies, challenges, and future directions. Use ${opts.focusArea} perspective. Format with clear headings in Markdown.` },
+        prompt: (q, opts) => `Provide a ${opts.academicLevel}-level summary of "${q}" research. Use ${opts.focusArea} perspective.
+
+**Format Requirements:**
+- Use professional, academic language appropriate for ${opts.academicLevel} level
+- Structure with clear, hierarchical headings
+- Include comprehensive coverage of key areas
+- Present information in a logical, flowing manner
+- Use bullet points and numbered lists for clarity
+- Maintain consistent formatting throughout
+
+**Structure:**
+## Executive Summary
+[2-3 sentence overview of the field]
+
+## Current State of Research
+[Comprehensive overview of where the field stands]
+
+## Key Findings and Breakthroughs
+[Major discoveries and advances]
+
+## Methodological Approaches
+[Research methods and techniques used]
+
+## Challenges and Limitations
+[Current obstacles and areas for improvement]
+
+## Future Directions
+[Emerging trends and research opportunities]
+
+## Conclusion
+[Summary of implications and next steps]` },
       { id: "methods", title: "🔬 Methods", meta: "Research methodologies and approaches.",
-        prompt: (q, opts) => `Describe the main research methodologies used in "${q}" studies. Include experimental designs, data collection methods, analysis techniques, and evaluation metrics. Explain at ${opts.academicLevel} level. Format in Markdown.` },
+        prompt: (q, opts) => `Describe the main research methodologies used in "${q}" studies. Explain at ${opts.academicLevel} level.
+
+**Format Requirements:**
+- Use clear, professional language
+- Organize methodologies logically
+- Provide concrete examples where possible
+- Use consistent formatting and structure
+- Include practical details and considerations
+- Maintain academic rigor
+
+**Structure:**
+## Research Methodologies Overview
+
+### Experimental Approaches
+[Description of experimental methods]
+
+### Data Collection Methods
+[Various data gathering techniques]
+
+### Analysis Techniques
+[Statistical and analytical methods]
+
+### Evaluation Metrics
+[How success is measured]
+
+### Methodological Considerations
+[Important factors to consider]
+
+### Best Practices
+[Recommended approaches]` },
       { id: "applications", title: "🚀 Applications", meta: "Real-world applications and use cases.",
-        prompt: (q, opts) => `List and explain practical applications of "${q}" research. Include current implementations, industry adoption, case studies, and potential future applications. Focus on ${opts.focusArea} aspects. Format in Markdown.` },
+        prompt: (q, opts) => `List and explain practical applications of "${q}" research. Focus on ${opts.focusArea} aspects.
+
+**Format Requirements:**
+- Use professional, business-oriented language
+- Provide concrete, real-world examples
+- Include industry-specific applications
+- Use clear categorization
+- Provide practical insights
+- Maintain professional tone
+
+**Structure:**
+## Real-World Applications
+
+### Industry Applications
+[Specific industry use cases]
+
+### Commercial Implementations
+[Business and commercial applications]
+
+### Case Studies
+[Real examples with outcomes]
+
+### Emerging Applications
+[New and developing uses]
+
+### Implementation Considerations
+[Practical factors to consider]
+
+### Market Impact
+[Economic and commercial implications]` },
       { id: "references", title: "📑 References", meta: "Formatted academic citations.",
-        prompt: (q, opts) => `Generate properly formatted academic references (APA style) for the most important works on "${q}" ${opts.timeRange !== 'all' ? `from the ${opts.timeRange}` : ''}. Include DOI/URL where available. Provide ${Math.min(opts.paperCount + 4, 15)} references as a numbered list.` },
+        prompt: (q, opts) => `Generate properly formatted academic references (APA style) for the most important works on "${q}" ${opts.timeRange !== 'all' ? `from the ${opts.timeRange}` : ''}. Include DOI/URL where available. Provide ${Math.min(opts.paperCount + 4, 15)} references.
+
+**Format Requirements:**
+- Use proper APA 7th edition formatting
+- Include DOI when available
+- Organize by relevance or recency
+- Use consistent formatting
+- Ensure accuracy and completeness
+- Professional academic presentation
+
+**Structure:**
+## Academic References
+
+[1] Author, A. A., & Author, B. B. (Year). Title of article. *Journal Name*, *Volume*(Issue), pages. https://doi.org/DOI
+
+[2] Author, C. C. (Year). Title of book. Publisher.
+
+[Continue with numbered list...]` },
       { id: "related", title: "🔗 Related Topics", meta: "Connected research areas and keywords.",
-        prompt: (q, opts) => `Identify related research topics, subtopics, and keywords connected to "${q}". Include interdisciplinary connections, emerging areas, and potential research directions. Organize by relevance and provide brief explanations. Format in Markdown.` },
+        prompt: (q, opts) => `Identify related research topics, subtopics, and keywords connected to "${q}".
+
+**Format Requirements:**
+- Use clear, professional language
+- Organize by relevance and relationship
+- Provide brief explanations for each topic
+- Use logical grouping and categorization
+- Include interdisciplinary connections
+- Maintain academic tone
+
+**Structure:**
+## Related Research Areas
+
+### Core Related Topics
+[Directly related subjects]
+
+### Interdisciplinary Connections
+[Connections to other fields]
+
+### Emerging Subtopics
+[New and developing areas]
+
+### Key Research Keywords
+[Important search terms]
+
+### Research Directions
+[Potential areas for exploration]
+
+### Collaborative Opportunities
+[Areas for interdisciplinary work]` },
       { id: "trends", title: "📈 Trends", meta: "Current research trends and future directions.",
-        prompt: (q, opts) => `Analyze current research trends in "${q}" ${opts.timeRange !== 'all' ? `focusing on the ${opts.timeRange}` : ''}. Include emerging methodologies, hot topics, funding patterns, and predicted future directions. Present at ${opts.academicLevel} level in Markdown format.` },
+        prompt: (q, opts) => `Analyze current research trends in "${q}" ${opts.timeRange !== 'all' ? `focusing on the ${opts.timeRange}` : ''}. Present at ${opts.academicLevel} level.
+
+**Format Requirements:**
+- Use professional, analytical language
+- Provide data-driven insights where possible
+- Use clear categorization and organization
+- Include specific examples and evidence
+- Maintain academic rigor
+- Use consistent formatting
+
+**Structure:**
+## Current Research Trends
+
+### Emerging Methodologies
+[New research approaches]
+
+### Hot Topics and Focus Areas
+[Currently trending subjects]
+
+### Funding and Investment Patterns
+[Financial and resource trends]
+
+### Collaborative Networks
+[Partnership and collaboration trends]
+
+### Technology Integration
+[Technology adoption trends]
+
+### Future Predictions
+[Anticipated developments]
+
+### Strategic Recommendations
+[Suggested research directions]` },
       { id: "datasets", title: "💾 Datasets", meta: "Available datasets and resources.",
-        prompt: (q, opts) => `List important datasets, benchmarks, and resources available for "${q}" research. Include dataset descriptions, access information, licensing, and typical use cases. Format as organized Markdown list with links where possible.` }
+        prompt: (q, opts) => `List important datasets, benchmarks, and resources available for "${q}" research.
+
+**Format Requirements:**
+- Use clear, professional language
+- Provide comprehensive information
+- Include practical details
+- Use consistent formatting
+- Organize logically
+- Include access information
+
+**Structure:**
+## Available Research Resources
+
+### Primary Datasets
+[Main data sources]
+
+### Benchmark Datasets
+[Standard evaluation datasets]
+
+### Open Access Resources
+[Freely available materials]
+
+### Commercial Resources
+[Paid or licensed materials]
+
+### Access Information
+[How to obtain access]
+
+### Usage Guidelines
+[Best practices and considerations]
+
+### Quality Assessment
+[Evaluation of resource quality]` }
     ];
 
     // Enhanced search suggestions
@@ -1165,7 +1392,20 @@
     function addChatMessage(message, isUser = false) {
       const messageDiv = document.createElement('div');
       messageDiv.className = `chat-message ${isUser ? 'user' : 'ai'}`;
-      messageDiv.innerHTML = message.replace(/\n/g, '<br>'); // Support line breaks
+      
+      // Enhanced message formatting for better readability
+      if (isUser) {
+        messageDiv.innerHTML = message.replace(/\n/g, '<br>');
+      } else {
+        // For AI messages, support Markdown-like formatting
+        messageDiv.innerHTML = message
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/### (.*?)(\n|$)/g, '<h3>$1</h3>')
+          .replace(/## (.*?)(\n|$)/g, '<h3 style="color: var(--accent-2); margin-top: 1em;">$1</h3>')
+          .replace(/\n/g, '<br>');
+      }
+      
       chatMessages.appendChild(messageDiv);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
@@ -1184,54 +1424,88 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
 
       try {
-        // Generate contextual AI response
-        let response = await generateAIResponse(message, currentSearchQuery, sectionContents);
+        // Generate contextual AI response with timeout
+        const responsePromise = generateAIResponse(message, currentSearchQuery, sectionContents);
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('timeout')), 30000) // 30 second timeout
+        );
+        
+        let response = await Promise.race([responsePromise, timeoutPromise]);
         
         // Remove typing indicator
         chatMessages.removeChild(typingDiv);
         addChatMessage(response);
       } catch (error) {
+        console.error('AI Chat Error:', error);
         chatMessages.removeChild(typingDiv);
-        addChatMessage("I'm having trouble responding right now. Please try again!");
+        
+        // Provide helpful error message
+        let errorMessage = "I'm having trouble responding right now. ";
+        if (error.message.includes('API')) {
+          errorMessage += "This might be due to a connection issue. Please check your internet connection and try again.";
+        } else if (error.message.includes('timeout')) {
+          errorMessage += "The request took too long. Please try again.";
+        } else {
+          errorMessage += "Please try again in a moment.";
+        }
+        
+        addChatMessage(errorMessage);
       }
     }
 
     async function generateAIResponse(userMessage, searchQuery, sections) {
       const lowerMessage = userMessage.toLowerCase();
       
+      // Enhanced system prompt for better AI responses
+      const systemPrompt = `You are an expert AI research assistant helping with academic research. You provide clear, professional, and helpful responses. Always be concise but thorough, use proper formatting, and maintain an academic tone.`;
+      
       // Context-aware responses based on user input and current research
       if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
         return `I can help you with your research on "${searchQuery || 'your topic'}"! I can:
 
-• Suggest better search terms
-• Explain complex concepts from your results  
-• Help refine your methodology
-• Recommend related research areas
-• Assist with citation formatting
-• Provide research tips and strategies
+• **Search Optimization**: Suggest better search terms and strategies
+• **Concept Explanation**: Clarify complex concepts from your results  
+• **Methodology Guidance**: Help refine your research approach
+• **Literature Review**: Recommend related research areas
+• **Citation Support**: Assist with formatting and references
+• **Research Strategy**: Provide tips and best practices
+• **Trend Analysis**: Identify emerging research directions
 
 What specific aspect would you like help with?`;
       }
       
       if (lowerMessage.includes('search') || lowerMessage.includes('query') || lowerMessage.includes('find')) {
         if (searchQuery) {
-          return `For your research on "${searchQuery}", you might want to try these refined searches:
+          return `For your research on **"${searchQuery}"**, here are some refined search strategies:
 
-• "${searchQuery} systematic review"
-• "${searchQuery} meta-analysis" 
-• "${searchQuery} recent advances"
-• "${searchQuery} methodology comparison"
+### **Advanced Search Queries:**
+• **"${searchQuery} systematic review"** - Find comprehensive literature reviews
+• **"${searchQuery} meta-analysis"** - Discover statistical syntheses
+• **"${searchQuery} recent advances 2020-2024"** - Focus on current developments
+• **"${searchQuery} methodology comparison"** - Compare different approaches
+• **"${searchQuery} challenges limitations"** - Identify research gaps
 
-You can also use the Advanced Options to filter by time period or focus area. What specific aspect are you most interested in?`;
+### **Search Tips:**
+• Use the **Advanced Options** to filter by time period and focus area
+• Try different academic levels for varying depth of information
+• Consider combining with specific domains (e.g., "in healthcare", "for climate research")
+
+What specific aspect of "${searchQuery}" are you most interested in exploring?`;
         } else {
-          return `To help you build better search queries, try:
+          return `To help you build better search queries, here are some proven strategies:
 
-• Be specific about methodology (e.g., "machine learning" vs "deep learning")
-• Include time constraints ("recent advances", "2020-2024") 
-• Specify the domain ("in healthcare", "for climate research")
-• Use the Advanced Options for better filtering
+### **Query Construction Tips:**
+• **Be Specific**: Use precise terminology (e.g., "machine learning" vs "deep learning")
+• **Time Constraints**: Add temporal filters ("recent advances", "2020-2024")
+• **Domain Specification**: Include context ("in healthcare", "for climate research")
+• **Methodology Focus**: Specify approaches ("experimental", "theoretical", "practical")
 
-What research topic are you exploring?`;
+### **Advanced Features:**
+• Use the **Advanced Options** for better filtering
+• Adjust academic level based on your needs
+• Focus on specific research areas for targeted results
+
+What research topic are you exploring? I can help you formulate the perfect search query.`;
         }
       }
       
@@ -1260,88 +1534,172 @@ Need help with a specific citation format or reference?`;
       
       if (lowerMessage.includes('method') || lowerMessage.includes('approach') || lowerMessage.includes('how to')) {
         if (sections.methods) {
-          return `Great question! Based on your research results, I can see several methodological approaches for "${searchQuery}". 
+          return `Excellent question! Based on your research results for **"${searchQuery}"**, I can see several methodological approaches available.
 
-The Methods section in your results shows various research approaches. Would you like me to:
-• Compare different methodologies?
-• Suggest which approach fits your needs?
-• Explain a specific method in detail?`;
+### **Available Methodologies in Your Results:**
+The Methods section shows various research approaches you can explore. I can help you:
+
+• **Compare Approaches**: Analyze different methodologies side-by-side
+• **Strategic Selection**: Recommend the best approach for your specific needs
+• **Deep Dive**: Explain any particular method in detail
+• **Implementation Guidance**: Provide practical steps for execution
+
+### **Next Steps:**
+Would you like me to help you analyze the methodologies in your results, or do you have a specific approach you'd like to understand better?`;
         } else {
-          return `Research methodology is crucial! Common approaches include:
+          return `Research methodology is crucial for successful academic work! Here are the main approaches:
 
-• **Systematic Reviews**: Comprehensive literature analysis
+### **Primary Research Methodologies:**
+
+#### **Literature-Based Approaches:**
+• **Systematic Reviews**: Comprehensive, structured literature analysis
 • **Meta-analysis**: Statistical synthesis of multiple studies  
-• **Experimental**: Controlled studies with variables
+• **Scoping Reviews**: Broad overview of research landscape
+
+#### **Data Collection Methods:**
+• **Experimental**: Controlled studies with manipulated variables
 • **Survey/Observational**: Data collection from populations
 • **Case Studies**: In-depth analysis of specific instances
+• **Qualitative**: Interviews, focus groups, content analysis
 
-What type of research are you planning to conduct?`;
+#### **Analysis Techniques:**
+• **Quantitative**: Statistical analysis, modeling
+• **Mixed Methods**: Combining qualitative and quantitative approaches
+• **Computational**: Simulation, modeling, data mining
+
+### **Selection Criteria:**
+Consider your research question, available resources, and desired outcomes when choosing a methodology.
+
+What type of research are you planning to conduct? I can help you select the most appropriate approach.`;
         }
       }
       
       if (lowerMessage.includes('trend') || lowerMessage.includes('future') || lowerMessage.includes('direction')) {
         if (sections.trends) {
-          return `Excellent question! Looking at current research trends for "${searchQuery}", there are several emerging directions worth exploring.
+          return `Excellent question! Looking at current research trends for **"${searchQuery}"**, there are several emerging directions worth exploring.
 
-The Trends section in your results highlights key developments. Are you interested in:
-• Emerging technologies in this field?
-• Future research opportunities?  
-• Funding and collaboration trends?`;
+### **Trend Analysis Available:**
+The Trends section in your results highlights key developments and future directions. I can help you explore:
+
+• **Emerging Technologies**: New tools and approaches in the field
+• **Future Research Opportunities**: Promising areas for investigation
+• **Funding and Collaboration Trends**: Resource allocation patterns
+• **Interdisciplinary Connections**: Cross-field opportunities
+• **Technology Integration**: Adoption of new methodologies
+
+### **Strategic Insights:**
+Would you like me to help you analyze specific trends from your results, or do you have particular aspects you'd like to explore further?`;
         } else {
-          return `Research trends are important for identifying opportunities! To analyze trends in your field:
+          return `Research trends are crucial for strategic planning and identifying opportunities! Here's how to analyze trends in your field:
 
-• Look for recent review papers (last 2-3 years)
-• Check funding agency priorities
-• Follow key conferences and journals
-• Monitor emerging interdisciplinary connections
+### **Trend Analysis Strategies:**
 
-What field or topic are you tracking trends for?`;
+#### **Literature Monitoring:**
+• **Recent Review Papers**: Focus on last 2-3 years for current state
+• **Systematic Reviews**: Comprehensive trend analysis
+• **Meta-analyses**: Statistical trend identification
+
+#### **Resource Tracking:**
+• **Funding Agency Priorities**: NSF, NIH, private foundations
+• **Conference Proceedings**: Latest research presentations
+• **Journal Special Issues**: Themed collections on trends
+
+#### **Network Analysis:**
+• **Collaboration Patterns**: Inter-institutional partnerships
+• **Citation Networks**: Influence and impact analysis
+• **Interdisciplinary Connections**: Cross-field innovations
+
+### **Proactive Approach:**
+Consider setting up alerts for key journals and conferences in your field.
+
+What field or topic are you tracking trends for? I can help you develop a comprehensive trend analysis strategy.`;
         }
       }
 
       if (lowerMessage.includes('paper') || lowerMessage.includes('article') || lowerMessage.includes('journal')) {
         if (sections.papers) {
-          return `I can help you navigate the papers in your results! For your "${searchQuery}" research, consider:
+          return `I can help you navigate the papers in your results! For your **"${searchQuery}"** research, here's a strategic evaluation framework:
 
-• **Impact Factor**: Higher impact journals for broader reach
-• **Recency**: Recent papers (2020+) for current methods
+### **Paper Evaluation Criteria:**
+
+#### **Impact and Reach:**
+• **Impact Factor**: Higher impact journals for broader visibility
 • **Citation Count**: Highly cited papers for foundational knowledge
-• **Open Access**: For easier sharing and access
+• **Author Reputation**: Established researchers in the field
 
-Which papers from your results caught your attention? I can help you prioritize them!`;
+#### **Content Quality:**
+• **Recency**: Recent papers (2020+) for current methodologies
+• **Methodology**: Robust research design and analysis
+• **Reproducibility**: Clear methods and available data/code
+
+#### **Accessibility:**
+• **Open Access**: Easier sharing and broader dissemination
+• **DOI Availability**: Proper citation and linking
+• **Supplementary Materials**: Additional data and resources
+
+### **Strategic Selection:**
+Which papers from your results caught your attention? I can help you prioritize them based on your specific research needs!`;
         } else {
-          return `When evaluating research papers, consider:
+          return `When evaluating research papers, use this comprehensive framework:
 
-• **Relevance**: Does it directly address your research question?
-• **Quality**: Peer-reviewed journals vs. preprints
+### **Paper Assessment Framework:**
+
+#### **Relevance & Alignment:**
+• **Research Question**: Does it directly address your topic?
+• **Scope**: Appropriate breadth and depth for your needs
+• **Context**: Relevant to your specific domain or application
+
+#### **Quality Indicators:**
+• **Publication Venue**: Peer-reviewed journals vs. preprints
 • **Methodology**: Sound research design and analysis
-• **Reproducibility**: Clear methods and available data
-• **Citations**: Well-referenced and frequently cited
+• **Data Quality**: Reliable and well-documented data sources
 
-Need help finding papers on a specific topic?`;
+#### **Reproducibility & Transparency:**
+• **Methods Clarity**: Detailed and understandable procedures
+• **Data Availability**: Access to raw data and materials
+• **Code Sharing**: Available software and algorithms
+
+#### **Impact & Influence:**
+• **Citation Network**: Well-referenced and frequently cited
+• **Author Credibility**: Established expertise in the field
+• **Institutional Affiliation**: Reputable research organizations
+
+### **Next Steps:**
+Need help finding papers on a specific topic? I can guide you through the search and evaluation process.`;
         }
       }
 
       // Default contextual response
       if (searchQuery && Object.keys(sections).length > 0) {
-        const availableSections = Object.keys(sections).join(', ');
-        return `I'm here to help with your "${searchQuery}" research! I can see you have results for: ${availableSections}.
+        const availableSections = Object.keys(sections).map(section => {
+          const sectionInfo = SECTIONS.find(s => s.id === section);
+          return sectionInfo ? sectionInfo.title : section;
+        }).join(', ');
+        
+        return `I'm here to help with your **"${searchQuery}"** research! I can see you have comprehensive results across multiple areas:
 
-I can help you:
-• Dive deeper into any of these sections
-• Connect concepts across different areas
-• Suggest next steps for your research
-• Clarify technical concepts
+### **Available Research Sections:**
+${availableSections}
 
-What aspect would you like to explore further?`;
+### **How I Can Help:**
+• **Deep Analysis**: Dive deeper into any specific section
+• **Cross-Connections**: Connect concepts across different research areas
+• **Strategic Planning**: Suggest next steps for your research
+• **Concept Clarification**: Explain technical terms and methodologies
+• **Literature Integration**: Help synthesize findings across sections
+
+### **Recommended Next Steps:**
+Based on your results, I recommend starting with the **Summary** section for an overview, then exploring specific areas of interest.
+
+What aspect would you like to explore further, or do you have a specific research question I can help with?`;
       }
 
       // Fallback for when no search has been done
       const responses = [
-        "I'm your research assistant! Try running a search first, then I can provide contextual help with your specific results and research needs.",
-        "Hello! I can help you refine search queries, understand research concepts, and navigate academic literature. What research topic are you exploring?",
-        "I'm here to assist with your academic research! I work best after you've searched for a topic - then I can provide targeted advice based on your results.",
-        "Hi there! I can help with research methodology, paper analysis, citation formatting, and finding research directions. What are you working on?",
+        "I'm your AI research assistant! To provide the most helpful guidance, please run a search first. Then I can offer contextual help based on your specific results and research needs.",
+        "Hello! I'm here to help you navigate academic research. Start by searching for a topic, and I'll provide targeted assistance with query refinement, concept explanation, and research strategy.",
+        "Welcome! I'm your research companion. I work best when I can see your search results - then I can offer specific advice on methodology, paper analysis, and research direction.",
+        "Hi there! I'm ready to help with your academic research. Begin with a search, and I'll provide comprehensive support with literature review, methodology selection, and strategic planning.",
       ];
       
       return responses[Math.floor(Math.random() * responses.length)];
@@ -1489,11 +1847,11 @@ What aspect would you like to explore further?`;
       const payload = {
         model: MODEL,
         messages: [
-          { role: "system", content: "You are Dobby Research Agent, an expert academic research assistant. Format output in Markdown, be concise and accurate." },
+          { role: "system", content: "You are Dobby Research Agent, an expert academic research assistant. You provide comprehensive, well-structured, and professional research information. Always format output in clean Markdown with proper headings, bullet points, and organized sections. Be thorough, accurate, and maintain academic rigor while ensuring clarity and readability." },
           { role: "user", content: section.prompt(query, options) }
         ],
-        max_tokens: 800,
-        temperature: 0.2
+        max_tokens: 1200,
+        temperature: 0.1
       };
 
       try {
