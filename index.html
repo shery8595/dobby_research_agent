@@ -290,6 +290,7 @@
       padding: 8px 12px;
       border-radius: 8px;
       max-width: 80%;
+      line-height: 1.4;
     }
 
     .chat-message.user {
@@ -299,6 +300,34 @@
 
     .chat-message.ai {
       background: #f1f5f9;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+      padding: 8px 0;
+    }
+
+    .typing-dots span {
+      width: 6px;
+      height: 6px;
+      background: var(--muted);
+      border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out;
+    }
+
+    .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes typing {
+      0%, 80%, 100% { 
+        transform: scale(0.8);
+        opacity: 0.5;
+      }
+      40% { 
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     .chat-input-container {
@@ -463,7 +492,56 @@
       border-bottom: none;
     }
 
-    /* Floating Action Button */
+    /* Fixed Action Bar */
+    .action-bar {
+      display: none;
+      position: sticky;
+      top: 20px;
+      background: var(--card);
+      border: 1px solid #e6e9ef;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(12,20,40,0.08);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .action-bar.visible {
+      display: flex;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    /* Floating status indicator */
+    .search-status {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--card);
+      border: 1px solid var(--accent);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--accent);
+      box-shadow: 0 4px 12px rgba(34,102,255,0.2);
+      z-index: 101;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-status.visible {
+      display: flex;
+    }
     .fab {
       position: fixed;
       bottom: 20px;
@@ -813,12 +891,17 @@
         <!-- Cards will be injected here by JS -->
       </div>
       
-      <!-- Global Actions -->
-      <div id="globalActions" style="display: none; margin-top: 20px;">
-        <button id="showCompare" class="btn ghost small">🔍 Compare Sections</button>
-        <button id="showDownload" class="btn ghost small">💾 Export Results</button>
-        <button id="generateCitations" class="btn ghost small">📖 Generate Citations</button>
-        <button id="toggleHistory" class="btn ghost small">📜 Search History</button>
+      <!-- Fixed Action Bar - positioned at top after search -->
+      <div id="actionBar" class="action-bar">
+        <div class="action-group">
+          <button id="showCompare" class="btn primary small">🔍 Compare</button>
+          <button id="showDownload" class="btn success small">💾 Export</button>
+          <button id="generateCitations" class="btn warning small">📖 Citations</button>
+        </div>
+        <div class="action-group">
+          <button id="toggleHistory" class="btn ghost small">📜 History</button>
+          <button id="exportStateBtn" class="btn ghost small">💾 Save Session</button>
+        </div>
       </div>
 
       <div class="footerTip">💡 Tip: Press <kbd>Enter</kbd> to search • Use advanced options for better results • Click the chat button for AI assistance</div>
@@ -937,7 +1020,7 @@
     const searchBtn = document.getElementById('searchBtn');
     const clearBtn = document.getElementById('clearBtn');
     const queryInput = document.getElementById('query');
-    const globalActions = document.getElementById('globalActions');
+    const actionBar = document.getElementById('actionBar');
     const progressContainer = document.getElementById('progressContainer');
     const progressBar = document.getElementById('progressBar');
     
@@ -1082,11 +1165,10 @@
     function addChatMessage(message, isUser = false) {
       const messageDiv = document.createElement('div');
       messageDiv.className = `chat-message ${isUser ? 'user' : 'ai'}`;
-      messageDiv.textContent = message;
+      messageDiv.innerHTML = message.replace(/\n/g, '<br>'); // Support line breaks
       chatMessages.appendChild(messageDiv);
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-
     async function sendChatMessage() {
       const message = chatInput.value.trim();
       if (!message) return;
@@ -1094,19 +1176,175 @@
       addChatMessage(message, true);
       chatInput.value = '';
 
-      // Simple AI response simulation - in real implementation, this would call the API
+      // Add typing indicator
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'chat-message ai typing';
+      typingDiv.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+      chatMessages.appendChild(typingDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        // Generate contextual AI response
+        let response = await generateAIResponse(message, currentSearchQuery, sectionContents);
+        
+        // Remove typing indicator
+        chatMessages.removeChild(typingDiv);
+        addChatMessage(response);
+      } catch (error) {
+        chatMessages.removeChild(typingDiv);
+        addChatMessage("I'm having trouble responding right now. Please try again!");
+      }
+    }
+
+    async function generateAIResponse(userMessage, searchQuery, sections) {
+      const lowerMessage = userMessage.toLowerCase();
+      
+      // Context-aware responses based on user input and current research
+      if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
+        return `I can help you with your research on "${searchQuery || 'your topic'}"! I can:
+
+• Suggest better search terms
+• Explain complex concepts from your results  
+• Help refine your methodology
+• Recommend related research areas
+• Assist with citation formatting
+• Provide research tips and strategies
+
+What specific aspect would you like help with?`;
+      }
+      
+      if (lowerMessage.includes('search') || lowerMessage.includes('query') || lowerMessage.includes('find')) {
+        if (searchQuery) {
+          return `For your research on "${searchQuery}", you might want to try these refined searches:
+
+• "${searchQuery} systematic review"
+• "${searchQuery} meta-analysis" 
+• "${searchQuery} recent advances"
+• "${searchQuery} methodology comparison"
+
+You can also use the Advanced Options to filter by time period or focus area. What specific aspect are you most interested in?`;
+        } else {
+          return `To help you build better search queries, try:
+
+• Be specific about methodology (e.g., "machine learning" vs "deep learning")
+• Include time constraints ("recent advances", "2020-2024") 
+• Specify the domain ("in healthcare", "for climate research")
+• Use the Advanced Options for better filtering
+
+What research topic are you exploring?`;
+        }
+      }
+      
+      if (lowerMessage.includes('explain') || lowerMessage.includes('what is') || lowerMessage.includes('define')) {
+        if (sections.summary) {
+          return `Based on your current research results, I can explain concepts from your "${searchQuery}" search. The summary shows several key areas you might want me to clarify.
+
+Which specific concept or term from your results would you like me to explain in more detail?`;
+        } else {
+          return `I'd be happy to explain research concepts! Once you've run a search, I can help clarify any technical terms or methodologies that appear in your results.
+
+What would you like me to explain?`;
+        }
+      }
+      
+      if (lowerMessage.includes('citation') || lowerMessage.includes('reference') || lowerMessage.includes('format')) {
+        return `I can help you with citations! Here are some tips:
+
+• Use the "📖 Citations" button above for formatted references
+• For APA style: Author, A. A. (Year). Title. Journal, Volume(Issue), pages.
+• For IEEE: [1] A. Author, "Title," Journal, vol. X, no. Y, pp. Z-Z, Year.
+• Always include DOI when available
+
+Need help with a specific citation format or reference?`;
+      }
+      
+      if (lowerMessage.includes('method') || lowerMessage.includes('approach') || lowerMessage.includes('how to')) {
+        if (sections.methods) {
+          return `Great question! Based on your research results, I can see several methodological approaches for "${searchQuery}". 
+
+The Methods section in your results shows various research approaches. Would you like me to:
+• Compare different methodologies?
+• Suggest which approach fits your needs?
+• Explain a specific method in detail?`;
+        } else {
+          return `Research methodology is crucial! Common approaches include:
+
+• **Systematic Reviews**: Comprehensive literature analysis
+• **Meta-analysis**: Statistical synthesis of multiple studies  
+• **Experimental**: Controlled studies with variables
+• **Survey/Observational**: Data collection from populations
+• **Case Studies**: In-depth analysis of specific instances
+
+What type of research are you planning to conduct?`;
+        }
+      }
+      
+      if (lowerMessage.includes('trend') || lowerMessage.includes('future') || lowerMessage.includes('direction')) {
+        if (sections.trends) {
+          return `Excellent question! Looking at current research trends for "${searchQuery}", there are several emerging directions worth exploring.
+
+The Trends section in your results highlights key developments. Are you interested in:
+• Emerging technologies in this field?
+• Future research opportunities?  
+• Funding and collaboration trends?`;
+        } else {
+          return `Research trends are important for identifying opportunities! To analyze trends in your field:
+
+• Look for recent review papers (last 2-3 years)
+• Check funding agency priorities
+• Follow key conferences and journals
+• Monitor emerging interdisciplinary connections
+
+What field or topic are you tracking trends for?`;
+        }
+      }
+
+      if (lowerMessage.includes('paper') || lowerMessage.includes('article') || lowerMessage.includes('journal')) {
+        if (sections.papers) {
+          return `I can help you navigate the papers in your results! For your "${searchQuery}" research, consider:
+
+• **Impact Factor**: Higher impact journals for broader reach
+• **Recency**: Recent papers (2020+) for current methods
+• **Citation Count**: Highly cited papers for foundational knowledge
+• **Open Access**: For easier sharing and access
+
+Which papers from your results caught your attention? I can help you prioritize them!`;
+        } else {
+          return `When evaluating research papers, consider:
+
+• **Relevance**: Does it directly address your research question?
+• **Quality**: Peer-reviewed journals vs. preprints
+• **Methodology**: Sound research design and analysis
+• **Reproducibility**: Clear methods and available data
+• **Citations**: Well-referenced and frequently cited
+
+Need help finding papers on a specific topic?`;
+        }
+      }
+
+      // Default contextual response
+      if (searchQuery && Object.keys(sections).length > 0) {
+        const availableSections = Object.keys(sections).join(', ');
+        return `I'm here to help with your "${searchQuery}" research! I can see you have results for: ${availableSections}.
+
+I can help you:
+• Dive deeper into any of these sections
+• Connect concepts across different areas
+• Suggest next steps for your research
+• Clarify technical concepts
+
+What aspect would you like to explore further?`;
+      }
+
+      // Fallback for when no search has been done
       const responses = [
-        "That's an interesting question! Based on your current research on '" + currentSearchQuery + "', I'd suggest looking into related methodologies.",
-        "Great point! You might want to explore the intersection between your topic and emerging technologies.",
-        "I can help you refine that search query. Try being more specific about the time period or methodology you're interested in.",
-        "For better results, consider using the advanced search options to filter by academic level and focus area.",
-        "That concept is related to several key papers in your current results. Would you like me to help you find more specific references?"
+        "I'm your research assistant! Try running a search first, then I can provide contextual help with your specific results and research needs.",
+        "Hello! I can help you refine search queries, understand research concepts, and navigate academic literature. What research topic are you exploring?",
+        "I'm here to assist with your academic research! I work best after you've searched for a topic - then I can provide targeted advice based on your results.",
+        "Hi there! I can help with research methodology, paper analysis, citation formatting, and finding research directions. What are you working on?",
       ];
       
-      setTimeout(() => {
-        const response = responses[Math.floor(Math.random() * responses.length)];
-        addChatMessage(response);
-      }, 1000);
+      return responses[Math.floor(Math.random() * responses.length)];
     }
 
     // Notes Functions
@@ -1308,7 +1546,7 @@
 
       setTimeout(() => {
         sectionsEl.classList.add('visible');
-        globalActions.style.display = 'block';
+        actionBar.classList.add('visible'); // Show action bar instead of globalActions
 
         const sectionNodes = Array.from(sectionsEl.querySelectorAll('.section'));
         sectionNodes.forEach((node, idx) => {
@@ -1559,9 +1797,7 @@
       searchCard.classList.remove('shrink');
       pageRoot.classList.remove('revealed');
       sectionsEl.classList.remove('visible');
-      globalActions.style.display = 'none';
-      hideCompareOptions();
-      hideDownloadOptions();
+      actionBar.classList.remove('visible'); // Hide action bar
       hideProgress();
       searchSuggestions.classList.remove('visible');
       document.querySelectorAll('.section').forEach(node => node.classList.remove('visible'));
@@ -1759,12 +1995,9 @@
       URL.revokeObjectURL(url);
     }
 
-    // Add export state button to global actions
-    const exportStateBtn = document.createElement('button');
-    exportStateBtn.className = 'btn ghost small';
-    exportStateBtn.textContent = '💾 Export Session';
+    // Add export state button to action bar
+    const exportStateBtn = document.getElementById('exportStateBtn');
     exportStateBtn.addEventListener('click', exportSearchState);
-    globalActions.appendChild(exportStateBtn);
 
     // Animate elements on scroll (for better UX)
     const observer = new IntersectionObserver((entries) => {
