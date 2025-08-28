@@ -248,102 +248,7 @@
       border-radius: 4px;
     }
 
-    /* AI Assistant Chat */
-    .ai-chat {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 350px;
-      height: 400px;
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      border: 1px solid #e6e9ef;
-      z-index: 1000;
-      flex-direction: column;
-    }
-
-    .ai-chat.visible {
-      display: flex;
-    }
-
-    .chat-header {
-      padding: 16px;
-      background: var(--accent);
-      color: white;
-      border-radius: var(--radius) var(--radius) 0 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .chat-messages {
-      flex: 1;
-      padding: 16px;
-      overflow-y: auto;
-      max-height: 250px;
-    }
-
-    .chat-message {
-      margin-bottom: 12px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      max-width: 80%;
-      line-height: 1.4;
-    }
-
-    .chat-message.user {
-      background: var(--glass);
-      margin-left: auto;
-    }
-
-    .chat-message.ai {
-      background: #f1f5f9;
-    }
-
-    .typing-dots {
-      display: flex;
-      gap: 4px;
-      padding: 8px 0;
-    }
-
-    .typing-dots span {
-      width: 6px;
-      height: 6px;
-      background: var(--muted);
-      border-radius: 50%;
-      animation: typing 1.4s infinite ease-in-out;
-    }
-
-    .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
-    .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
-
-    @keyframes typing {
-      0%, 80%, 100% { 
-        transform: scale(0.8);
-        opacity: 0.5;
-      }
-      40% { 
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .chat-input-container {
-      padding: 16px;
-      border-top: 1px solid #e6e9ef;
-      display: flex;
-      gap: 8px;
-    }
-
-    .chat-input {
-      flex: 1;
-      padding: 8px 12px;
-      border: 1px solid #e6e9ef;
-      border-radius: 8px;
-      font-size: 14px;
-    }
+    
 
     /* Sections grid */
     .sections {
@@ -817,12 +722,7 @@
         align-self: flex-end;
       }
       
-      .ai-chat {
-        width: 90vw;
-        height: 70vh;
-        right: 5vw;
-        bottom: 20px;
-      }
+
       
       .notes-panel {
         width: 100vw;
@@ -841,7 +741,7 @@
           <div class="logo" aria-hidden="true">DR</div>
           <div class="title">
             <div id="appTitle" class="name">Dobby Research Agent</div>
-            <div class="tag">Enhanced with AI chat • citations • notes • history</div>
+            <div class="tag">Enhanced with citations • notes • history</div>
           </div>
           <div style="flex:1"></div>
           <button id="advancedToggle" class="btn ghost small">⚙️ Advanced</button>
@@ -960,36 +860,11 @@
         <!-- Cards will be injected here by JS -->
       </div>
 
-      <div class="footerTip">💡 Tip: Press <kbd>Enter</kbd> to search • Use advanced options for better results • Click the chat button for AI assistance</div>
+             <div class="footerTip">💡 Tip: Press <kbd>Enter</kbd> to search • Use advanced options for better results</div>
     </div>
   </div>
 
-  <!-- Floating Action Button for AI Chat -->
-  <button id="chatFab" class="fab">💬</button>
-
-  <!-- AI Chat Panel -->
-  <div id="aiChat" class="ai-chat">
-    <div class="chat-header">
-      <div>AI Research Assistant</div>
-      <button id="closeChatBtn" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">×</button>
-    </div>
-    <div id="chatMessages" class="chat-messages">
-      <div class="chat-message ai">
-        Hi! I'm your AI research assistant. I can help you:
-        <ul>
-          <li>Refine your search queries</li>
-          <li>Explain complex concepts</li>
-          <li>Suggest related topics</li>
-          <li>Help with citations</li>
-        </ul>
-        What would you like to know?
-      </div>
-    </div>
-    <div class="chat-input-container">
-      <input type="text" id="chatInput" class="chat-input" placeholder="Ask me anything...">
-      <button id="chatSendBtn" class="btn primary small">Send</button>
-    </div>
-  </div>
+  
 
   <!-- Notes Panel -->
   <div id="notesPanel" class="notes-panel">
@@ -1345,13 +1220,7 @@
     const citationOutput = document.getElementById('citationOutput');
     const closeCitationBtn = document.getElementById('closeCitationBtn');
     
-    // AI Chat
-    const chatFab = document.getElementById('chatFab');
-    const aiChat = document.getElementById('aiChat');
-    const closeChatBtn = document.getElementById('closeChatBtn');
-    const chatMessages = document.getElementById('chatMessages');
-    const chatInput = document.getElementById('chatInput');
-    const chatSendBtn = document.getElementById('chatSendBtn');
+    
     
     // Notes
     const notesPanel = document.getElementById('notesPanel');
@@ -1442,322 +1311,7 @@
       searchSuggestions.classList.add('visible');
     }
 
-    // AI Chat Functions
-    function addChatMessage(message, isUser = false) {
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `chat-message ${isUser ? 'user' : 'ai'}`;
-      
-      // Enhanced message formatting for better readability
-      if (isUser) {
-        messageDiv.innerHTML = message.replace(/\n/g, '<br>');
-      } else {
-        // For AI messages, support Markdown-like formatting
-        messageDiv.innerHTML = message
-          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-          .replace(/\*(.*?)\*/g, '<em>$1</em>')
-          .replace(/### (.*?)(\n|$)/g, '<h3>$1</h3>')
-          .replace(/## (.*?)(\n|$)/g, '<h3 style="color: var(--accent-2); margin-top: 1em;">$1</h3>')
-          .replace(/\n/g, '<br>');
-      }
-      
-      chatMessages.appendChild(messageDiv);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-    async function sendChatMessage() {
-      const message = chatInput.value.trim();
-      if (!message) return;
-
-      addChatMessage(message, true);
-      chatInput.value = '';
-
-      // Add typing indicator
-      const typingDiv = document.createElement('div');
-      typingDiv.className = 'chat-message ai typing';
-      typingDiv.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
-      chatMessages.appendChild(typingDiv);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-
-      try {
-        // Generate contextual AI response with timeout
-        const responsePromise = generateAIResponse(message, currentSearchQuery, sectionContents);
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('timeout')), 30000) // 30 second timeout
-        );
-        
-        let response = await Promise.race([responsePromise, timeoutPromise]);
-        
-        // Remove typing indicator
-        chatMessages.removeChild(typingDiv);
-        addChatMessage(response);
-      } catch (error) {
-        console.error('AI Chat Error:', error);
-        chatMessages.removeChild(typingDiv);
-        
-        // Provide helpful error message
-        let errorMessage = "I'm having trouble responding right now. ";
-        if (error.message.includes('API')) {
-          errorMessage += "This might be due to a connection issue. Please check your internet connection and try again.";
-        } else if (error.message.includes('timeout')) {
-          errorMessage += "The request took too long. Please try again.";
-        } else {
-          errorMessage += "Please try again in a moment.";
-        }
-        
-        addChatMessage(errorMessage);
-      }
-    }
-
-    async function generateAIResponse(userMessage, searchQuery, sections) {
-      const lowerMessage = userMessage.toLowerCase();
-      
-      // Enhanced system prompt for better AI responses
-      const systemPrompt = `You are an expert AI research assistant helping with academic research. You provide clear, professional, and helpful responses. Always be concise but thorough, use proper formatting, and maintain an academic tone.`;
-      
-      // Context-aware responses based on user input and current research
-      if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
-        return `I can help you with your research on "${searchQuery || 'your topic'}"! I can:
-
-• **Search Optimization**: Suggest better search terms and strategies
-• **Concept Explanation**: Clarify complex concepts from your results  
-• **Methodology Guidance**: Help refine your research approach
-• **Literature Review**: Recommend related research areas
-• **Citation Support**: Assist with formatting and references
-• **Research Strategy**: Provide tips and best practices
-• **Trend Analysis**: Identify emerging research directions
-
-What specific aspect would you like help with?`;
-      }
-      
-      if (lowerMessage.includes('search') || lowerMessage.includes('query') || lowerMessage.includes('find')) {
-        if (searchQuery) {
-          return `For your research on **"${searchQuery}"**, here are some refined search strategies:
-
-### **Advanced Search Queries:**
-• **"${searchQuery} systematic review"** - Find comprehensive literature reviews
-• **"${searchQuery} meta-analysis"** - Discover statistical syntheses
-• **"${searchQuery} recent advances 2020-2024"** - Focus on current developments
-• **"${searchQuery} methodology comparison"** - Compare different approaches
-• **"${searchQuery} challenges limitations"** - Identify research gaps
-
-### **Search Tips:**
-• Use the **Advanced Options** to filter by time period and focus area
-• Try different academic levels for varying depth of information
-• Consider combining with specific domains (e.g., "in healthcare", "for climate research")
-
-What specific aspect of "${searchQuery}" are you most interested in exploring?`;
-        } else {
-          return `To help you build better search queries, here are some proven strategies:
-
-### **Query Construction Tips:**
-• **Be Specific**: Use precise terminology (e.g., "machine learning" vs "deep learning")
-• **Time Constraints**: Add temporal filters ("recent advances", "2020-2024")
-• **Domain Specification**: Include context ("in healthcare", "for climate research")
-• **Methodology Focus**: Specify approaches ("experimental", "theoretical", "practical")
-
-### **Advanced Features:**
-• Use the **Advanced Options** for better filtering
-• Adjust academic level based on your needs
-• Focus on specific research areas for targeted results
-
-What research topic are you exploring? I can help you formulate the perfect search query.`;
-        }
-      }
-      
-      if (lowerMessage.includes('explain') || lowerMessage.includes('what is') || lowerMessage.includes('define')) {
-        if (sections.summary) {
-          return `Based on your current research results, I can explain concepts from your "${searchQuery}" search. The summary shows several key areas you might want me to clarify.
-
-Which specific concept or term from your results would you like me to explain in more detail?`;
-        } else {
-          return `I'd be happy to explain research concepts! Once you've run a search, I can help clarify any technical terms or methodologies that appear in your results.
-
-What would you like me to explain?`;
-        }
-      }
-      
-      if (lowerMessage.includes('citation') || lowerMessage.includes('reference') || lowerMessage.includes('format')) {
-        return `I can help you with citations! Here are some tips:
-
-• Use the "📖 Citations" button above for formatted references
-• For APA style: Author, A. A. (Year). Title. Journal, Volume(Issue), pages.
-• For IEEE: [1] A. Author, "Title," Journal, vol. X, no. Y, pp. Z-Z, Year.
-• Always include DOI when available
-
-Need help with a specific citation format or reference?`;
-      }
-      
-      if (lowerMessage.includes('method') || lowerMessage.includes('approach') || lowerMessage.includes('how to')) {
-        if (sections.methods) {
-          return `Excellent question! Based on your research results for **"${searchQuery}"**, I can see several methodological approaches available.
-
-### **Available Methodologies in Your Results:**
-The Methods section shows various research approaches you can explore. I can help you:
-
-• **Compare Approaches**: Analyze different methodologies side-by-side
-• **Strategic Selection**: Recommend the best approach for your specific needs
-• **Deep Dive**: Explain any particular method in detail
-• **Implementation Guidance**: Provide practical steps for execution
-
-### **Next Steps:**
-Would you like me to help you analyze the methodologies in your results, or do you have a specific approach you'd like to understand better?`;
-        } else {
-          return `Research methodology is crucial for successful academic work! Here are the main approaches:
-
-### **Primary Research Methodologies:**
-
-#### **Literature-Based Approaches:**
-• **Systematic Reviews**: Comprehensive, structured literature analysis
-• **Meta-analysis**: Statistical synthesis of multiple studies  
-• **Scoping Reviews**: Broad overview of research landscape
-
-#### **Data Collection Methods:**
-• **Experimental**: Controlled studies with manipulated variables
-• **Survey/Observational**: Data collection from populations
-• **Case Studies**: In-depth analysis of specific instances
-• **Qualitative**: Interviews, focus groups, content analysis
-
-#### **Analysis Techniques:**
-• **Quantitative**: Statistical analysis, modeling
-• **Mixed Methods**: Combining qualitative and quantitative approaches
-• **Computational**: Simulation, modeling, data mining
-
-### **Selection Criteria:**
-Consider your research question, available resources, and desired outcomes when choosing a methodology.
-
-What type of research are you planning to conduct? I can help you select the most appropriate approach.`;
-        }
-      }
-      
-      if (lowerMessage.includes('trend') || lowerMessage.includes('future') || lowerMessage.includes('direction')) {
-        if (sections.trends) {
-          return `Excellent question! Looking at current research trends for **"${searchQuery}"**, there are several emerging directions worth exploring.
-
-### **Trend Analysis Available:**
-The Trends section in your results highlights key developments and future directions. I can help you explore:
-
-• **Emerging Technologies**: New tools and approaches in the field
-• **Future Research Opportunities**: Promising areas for investigation
-• **Funding and Collaboration Trends**: Resource allocation patterns
-• **Interdisciplinary Connections**: Cross-field opportunities
-• **Technology Integration**: Adoption of new methodologies
-
-### **Strategic Insights:**
-Would you like me to help you analyze specific trends from your results, or do you have particular aspects you'd like to explore further?`;
-        } else {
-          return `Research trends are crucial for strategic planning and identifying opportunities! Here's how to analyze trends in your field:
-
-### **Trend Analysis Strategies:**
-
-#### **Literature Monitoring:**
-• **Recent Review Papers**: Focus on last 2-3 years for current state
-• **Systematic Reviews**: Comprehensive trend analysis
-• **Meta-analyses**: Statistical trend identification
-
-#### **Resource Tracking:**
-• **Funding Agency Priorities**: NSF, NIH, private foundations
-• **Conference Proceedings**: Latest research presentations
-• **Journal Special Issues**: Themed collections on trends
-
-#### **Network Analysis:**
-• **Collaboration Patterns**: Inter-institutional partnerships
-• **Citation Networks**: Influence and impact analysis
-• **Interdisciplinary Connections**: Cross-field innovations
-
-### **Proactive Approach:**
-Consider setting up alerts for key journals and conferences in your field.
-
-What field or topic are you tracking trends for? I can help you develop a comprehensive trend analysis strategy.`;
-        }
-      }
-
-      if (lowerMessage.includes('paper') || lowerMessage.includes('article') || lowerMessage.includes('journal')) {
-        if (sections.papers) {
-          return `I can help you navigate the papers in your results! For your **"${searchQuery}"** research, here's a strategic evaluation framework:
-
-### **Paper Evaluation Criteria:**
-
-#### **Impact and Reach:**
-• **Impact Factor**: Higher impact journals for broader visibility
-• **Citation Count**: Highly cited papers for foundational knowledge
-• **Author Reputation**: Established researchers in the field
-
-#### **Content Quality:**
-• **Recency**: Recent papers (2020+) for current methodologies
-• **Methodology**: Robust research design and analysis
-• **Reproducibility**: Clear methods and available data/code
-
-#### **Accessibility:**
-• **Open Access**: Easier sharing and broader dissemination
-• **DOI Availability**: Proper citation and linking
-• **Supplementary Materials**: Additional data and resources
-
-### **Strategic Selection:**
-Which papers from your results caught your attention? I can help you prioritize them based on your specific research needs!`;
-        } else {
-          return `When evaluating research papers, use this comprehensive framework:
-
-### **Paper Assessment Framework:**
-
-#### **Relevance & Alignment:**
-• **Research Question**: Does it directly address your topic?
-• **Scope**: Appropriate breadth and depth for your needs
-• **Context**: Relevant to your specific domain or application
-
-#### **Quality Indicators:**
-• **Publication Venue**: Peer-reviewed journals vs. preprints
-• **Methodology**: Sound research design and analysis
-• **Data Quality**: Reliable and well-documented data sources
-
-#### **Reproducibility & Transparency:**
-• **Methods Clarity**: Detailed and understandable procedures
-• **Data Availability**: Access to raw data and materials
-• **Code Sharing**: Available software and algorithms
-
-#### **Impact & Influence:**
-• **Citation Network**: Well-referenced and frequently cited
-• **Author Credibility**: Established expertise in the field
-• **Institutional Affiliation**: Reputable research organizations
-
-### **Next Steps:**
-Need help finding papers on a specific topic? I can guide you through the search and evaluation process.`;
-        }
-      }
-
-      // Default contextual response
-      if (searchQuery && Object.keys(sections).length > 0) {
-        const availableSections = Object.keys(sections).map(section => {
-          const sectionInfo = SECTIONS.find(s => s.id === section);
-          return sectionInfo ? sectionInfo.title : section;
-        }).join(', ');
-        
-        return `I'm here to help with your **"${searchQuery}"** research! I can see you have comprehensive results across multiple areas:
-
-### **Available Research Sections:**
-${availableSections}
-
-### **How I Can Help:**
-• **Deep Analysis**: Dive deeper into any specific section
-• **Cross-Connections**: Connect concepts across different research areas
-• **Strategic Planning**: Suggest next steps for your research
-• **Concept Clarification**: Explain technical terms and methodologies
-• **Literature Integration**: Help synthesize findings across sections
-
-### **Recommended Next Steps:**
-Based on your results, I recommend starting with the **Summary** section for an overview, then exploring specific areas of interest.
-
-What aspect would you like to explore further, or do you have a specific research question I can help with?`;
-      }
-
-      // Fallback for when no search has been done
-      const responses = [
-        "I'm your AI research assistant! To provide the most helpful guidance, please run a search first. Then I can offer contextual help based on your specific results and research needs.",
-        "Hello! I'm here to help you navigate academic research. Start by searching for a topic, and I'll provide targeted assistance with query refinement, concept explanation, and research strategy.",
-        "Welcome! I'm your research companion. I work best when I can see your search results - then I can offer specific advice on methodology, paper analysis, and research direction.",
-        "Hi there! I'm ready to help with your academic research. Begin with a search, and I'll provide comprehensive support with literature review, methodology selection, and strategic planning.",
-      ];
-      
-      return responses[Math.floor(Math.random() * responses.length)];
-    }
+    
 
     // Notes Functions
     function addNote() {
@@ -2320,19 +1874,7 @@ What aspect would you like to explore further, or do you have a specific researc
       citationModal.classList.remove('visible');
     });
 
-    // AI Chat
-    chatFab.addEventListener('click', () => {
-      aiChat.classList.add('visible');
-      chatFab.style.display = 'none';
-    });
-    closeChatBtn.addEventListener('click', () => {
-      aiChat.classList.remove('visible');
-      chatFab.style.display = 'flex';
-    });
-    chatSendBtn.addEventListener('click', sendChatMessage);
-    chatInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendChatMessage();
-    });
+    
 
     // Notes
     addNoteBtn.addEventListener('click', addNote);
@@ -2369,14 +1911,12 @@ What aspect would you like to explore further, or do you have a specific researc
         queryInput.focus();
       }
       
-      // Escape to close modals
-      if (e.key === 'Escape') {
-        aiChat.classList.remove('visible');
-        notesPanel.classList.remove('visible');
-        citationModal.classList.remove('visible');
-        searchSuggestions.classList.remove('visible');
-        chatFab.style.display = 'flex';
-      }
+             // Escape to close modals
+       if (e.key === 'Escape') {
+         notesPanel.classList.remove('visible');
+         citationModal.classList.remove('visible');
+         searchSuggestions.classList.remove('visible');
+       }
     });
 
     // Submit on Enter (without shift)
@@ -2495,7 +2035,6 @@ What aspect would you like to explore further, or do you have a specific researc
          // Initialize tooltips for better UX
      function addTooltips() {
        const tooltipElements = [
-         { element: chatFab, text: 'AI Research Assistant (Ctrl+C)' },
          { element: notesFab, text: 'Research Notes (Ctrl+N)' },
          { element: advancedToggle, text: 'Advanced Search Options' },
          { element: searchBtn, text: 'Search (Ctrl+Enter)' },
