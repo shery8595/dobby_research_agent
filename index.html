@@ -669,8 +669,56 @@
     }
 
     /* markdown */
-    .md a { color:var(--accent); text-decoration:none; }
-    .md a:hover { text-decoration:underline; }
+    .md a { 
+      color: var(--accent); 
+      text-decoration: none; 
+      background: rgba(34, 102, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(34, 102, 255, 0.15);
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+    .md a:hover { 
+      text-decoration: none;
+      background: rgba(34, 102, 255, 0.15);
+      border-color: rgba(34, 102, 255, 0.3);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(34, 102, 255, 0.2);
+    }
+    .md a:active {
+      transform: translateY(0);
+    }
+    
+    /* Special styling for external links */
+    .md a[href^="http"]::after {
+      content: " ↗";
+      font-size: 0.8em;
+      opacity: 0.7;
+    }
+    
+    /* DOI links styling */
+    .md a[href*="doi.org"] {
+      background: rgba(0, 128, 0, 0.1);
+      border-color: rgba(0, 128, 0, 0.3);
+      color: #006400;
+    }
+    .md a[href*="doi.org"]:hover {
+      background: rgba(0, 128, 0, 0.15);
+      border-color: rgba(0, 128, 0, 0.5);
+    }
+    
+    /* arXiv links styling */
+    .md a[href*="arxiv.org"] {
+      background: rgba(255, 140, 0, 0.1);
+      border-color: rgba(255, 140, 0, 0.3);
+      color: #d2691e;
+    }
+    .md a[href*="arxiv.org"]:hover {
+      background: rgba(255, 140, 0, 0.15);
+      border-color: rgba(255, 140, 0, 0.5);
+    }
+    
     .md h2 { margin-top:1.2em; margin-bottom:0.8em; color:#0b2a66; font-size:1.4em; border-bottom:2px solid #eef2ff; padding-bottom:0.3em; }
     .md h3 { margin-top:1em; margin-bottom:0.6em; color:#0b2a66; font-size:1.2em; }
     .md h4 { margin-top:0.8em; margin-bottom:0.5em; color:#0b2a66; font-size:1.1em; }
@@ -988,6 +1036,8 @@
 - Use proper Markdown formatting with headers and bullet points
 - Organize by relevance or recency
 - Ensure academic tone and precision
+- ALWAYS include clickable links for DOI, arXiv, or publisher URLs when available
+- Format links as: [DOI: 10.1000/example](https://doi.org/10.1000/example) or [arXiv: 1234.5678](https://arxiv.org/abs/1234.5678)
 
 **Structure:**
 ## Key Research Papers
@@ -996,7 +1046,9 @@
 - **Authors:** [Author names]
 - **Year:** [Year]
 - **Journal/Conference:** [Journal name]
-- **DOI:** [DOI if available]
+- **DOI:** [DOI if available] - [DOI: 10.1000/example](https://doi.org/10.1000/example)
+- **ArXiv:** [ArXiv ID if available] - [arXiv: 1234.5678](https://arxiv.org/abs/1234.5678)
+- **Publisher Link:** [Direct link to paper if available]
 - **Summary:** [Clear, professional description of key contributions and findings]
 
 [Continue for each paper...]` },
@@ -1188,30 +1240,32 @@
 - Use consistent formatting
 - Organize logically
 - Include access information
+- ALWAYS include clickable links to dataset sources, download pages, and documentation
+- Format links as: [Dataset Name](https://dataset-url.com) or [Download](https://download-link.com)
 
 **Structure:**
 ## Available Research Resources
 
 ### Primary Datasets
-[Main data sources]
+[Main data sources with direct links to download pages]
 
 ### Benchmark Datasets
-[Standard evaluation datasets]
+[Standard evaluation datasets with links to leaderboards and downloads]
 
 ### Open Access Resources
-[Freely available materials]
+[Freely available materials with direct access links]
 
 ### Commercial Resources
-[Paid or licensed materials]
+[Paid or licensed materials with vendor links]
 
 ### Access Information
-[How to obtain access]
+[How to obtain access with registration/download links]
 
 ### Usage Guidelines
-[Best practices and considerations]
+[Best practices and considerations with documentation links]
 
 ### Quality Assessment
-[Evaluation of resource quality]` }
+[Evaluation of resource quality with citation links]` }
     ];
 
     // Enhanced search suggestions
@@ -1937,26 +1991,84 @@ What aspect would you like to explore further, or do you have a specific researc
           
           renderMarkdownTo(body, content);
 
-          // Add special features for certain sections
-          if (s.id === 'references') {
-            const footer = document.createElement('div');
-            footer.style.marginTop = '12px';
-            footer.style.display = 'flex';
-            footer.style.justifyContent = 'flex-end';
-            footer.style.gap = '8px';
+                     // Add special features for certain sections
+           if (s.id === 'references') {
+             const footer = document.createElement('div');
+             footer.style.marginTop = '12px';
+             footer.style.display = 'flex';
+             footer.style.justifyContent = 'flex-end';
+             footer.style.gap = '8px';
 
-            const copyBtn = document.createElement('button');
-            copyBtn.className = 'btn small';
-            copyBtn.textContent = '📋 Copy references';
-            copyBtn.addEventListener('click', () => {
-              navigator.clipboard.writeText(content.replace(/\n{2,}/g, '\n\n')).then(() => {
-                copyBtn.textContent = '✓ Copied';
-                setTimeout(()=> copyBtn.textContent = '📋 Copy references', 1400);
-              });
-            });
-            footer.appendChild(copyBtn);
-            body.appendChild(footer);
-          }
+             const copyBtn = document.createElement('button');
+             copyBtn.className = 'btn small';
+             copyBtn.textContent = '📋 Copy references';
+             copyBtn.addEventListener('click', () => {
+               navigator.clipboard.writeText(content.replace(/\n{2,}/g, '\n\n')).then(() => {
+                 copyBtn.textContent = '✓ Copied';
+                 setTimeout(()=> copyBtn.textContent = '📋 Copy references', 1400);
+               });
+             });
+             footer.appendChild(copyBtn);
+             body.appendChild(footer);
+           }
+           
+           // Add special features for papers section
+           if (s.id === 'papers') {
+             const footer = document.createElement('div');
+             footer.style.marginTop = '12px';
+             footer.style.display = 'flex';
+             footer.style.justifyContent = 'space-between';
+             footer.style.alignItems = 'center';
+             footer.style.gap = '8px';
+             
+             const linksInfo = document.createElement('div');
+             linksInfo.style.fontSize = '12px';
+             linksInfo.style.color = 'var(--muted)';
+             linksInfo.innerHTML = '🔗 Links are clickable - DOI, arXiv, and publisher links available';
+             
+             const copyBtn = document.createElement('button');
+             copyBtn.className = 'btn small';
+             copyBtn.textContent = '📋 Copy papers';
+             copyBtn.addEventListener('click', () => {
+               navigator.clipboard.writeText(content.replace(/\n{2,}/g, '\n\n')).then(() => {
+                 copyBtn.textContent = '✓ Copied';
+                 setTimeout(()=> copyBtn.textContent = '📋 Copy papers', 1400);
+               });
+             });
+             
+             footer.appendChild(linksInfo);
+             footer.appendChild(copyBtn);
+             body.appendChild(footer);
+           }
+           
+           // Add special features for datasets section
+           if (s.id === 'datasets') {
+             const footer = document.createElement('div');
+             footer.style.marginTop = '12px';
+             footer.style.display = 'flex';
+             footer.style.justifyContent = 'space-between';
+             footer.style.alignItems = 'center';
+             footer.style.gap = '8px';
+             
+             const linksInfo = document.createElement('div');
+             linksInfo.style.fontSize = '12px';
+             linksInfo.style.color = 'var(--muted)';
+             linksInfo.innerHTML = '🔗 Direct links to datasets, downloads, and documentation';
+             
+             const copyBtn = document.createElement('button');
+             copyBtn.className = 'btn small';
+             copyBtn.textContent = '📋 Copy datasets';
+             copyBtn.addEventListener('click', () => {
+               navigator.clipboard.writeText(content.replace(/\n{2,}/g, '\n\n')).then(() => {
+                 copyBtn.textContent = '✓ Copied';
+                 setTimeout(()=> copyBtn.textContent = '📋 Copy datasets', 1400);
+               });
+             });
+             
+             footer.appendChild(linksInfo);
+             footer.appendChild(copyBtn);
+             body.appendChild(footer);
+           }
 
           completedSections++;
           updateProgress((completedSections / totalSections) * 100);
@@ -2380,26 +2492,37 @@ What aspect would you like to explore further, or do you have a specific researc
     window.copyCitations = copyCitations;
     window.downloadCitations = downloadCitations;
 
-    // Initialize tooltips for better UX
-    function addTooltips() {
-      const tooltipElements = [
-        { element: chatFab, text: 'AI Research Assistant (Ctrl+C)' },
-        { element: notesFab, text: 'Research Notes (Ctrl+N)' },
-        { element: advancedToggle, text: 'Advanced Search Options' },
-        { element: searchBtn, text: 'Search (Ctrl+Enter)' },
-        { element: clearBtn, text: 'Clear and Reset' }
-      ];
+         // Initialize tooltips for better UX
+     function addTooltips() {
+       const tooltipElements = [
+         { element: chatFab, text: 'AI Research Assistant (Ctrl+C)' },
+         { element: notesFab, text: 'Research Notes (Ctrl+N)' },
+         { element: advancedToggle, text: 'Advanced Search Options' },
+         { element: searchBtn, text: 'Search (Ctrl+Enter)' },
+         { element: clearBtn, text: 'Clear and Reset' }
+       ];
 
-      tooltipElements.forEach(({ element, text }) => {
-        if (element) {
-          element.title = text;
-        }
-      });
-    }
+       tooltipElements.forEach(({ element, text }) => {
+         if (element) {
+           element.title = text;
+         }
+       });
+     }
+     
+     // Function to make external links open in new tabs
+     function setupExternalLinks() {
+       document.addEventListener('click', (e) => {
+         if (e.target.tagName === 'A' && e.target.href && e.target.href.startsWith('http')) {
+           e.preventDefault();
+           window.open(e.target.href, '_blank', 'noopener,noreferrer');
+         }
+       });
+     }
 
-    addTooltips();
+         addTooltips();
+     setupExternalLinks();
 
-    // Smart search suggestions based on current content
+     // Smart search suggestions based on current content
     function generateSmartSuggestions(query) {
       const suggestions = [];
       
